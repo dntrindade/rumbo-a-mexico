@@ -1,0 +1,538 @@
+<title>Rumbo a México</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Karla:ital,wght@0,400;0,500;0,700;1,400&display=swap');
+
+:root{
+  --bg:#F7F3EA;
+  --surface:#FFFEFA;
+  --surface-2:#F1EAD9;
+  --ink:#211B14;
+  --ink-muted:#6E6350;
+  --accent:#2757A6;
+  --accent-ink:#FFFFFF;
+  --accent-tint:#E3EBF7;
+  --marigold:#C9701E;
+  --marigold-tint:#F7E7D2;
+  --line:#E2D9C4;
+  --done:#3F7D5C;
+  --done-bg:#E2EEE4;
+  --shadow: 0 1px 2px rgba(33,27,20,.06), 0 6px 20px -8px rgba(33,27,20,.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1B170F;
+    --surface:#242018;
+    --surface-2:#2C2619;
+    --ink:#F3ECDC;
+    --ink-muted:#B7AB90;
+    --accent:#7FA8E6;
+    --accent-ink:#12203A;
+    --accent-tint:#26314A;
+    --marigold:#EFA35C;
+    --marigold-tint:#3A2C18;
+    --line:#3B3323;
+    --done:#7FC29B;
+    --done-bg:#233327;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 28px -10px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1B170F;
+  --surface:#242018;
+  --surface-2:#2C2619;
+  --ink:#F3ECDC;
+  --ink-muted:#B7AB90;
+  --accent:#7FA8E6;
+  --accent-ink:#12203A;
+  --accent-tint:#26314A;
+  --marigold:#EFA35C;
+  --marigold-tint:#3A2C18;
+  --line:#3B3323;
+  --done:#7FC29B;
+  --done-bg:#233327;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 28px -10px rgba(0,0,0,.5);
+}
+
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Karla',system-ui,-apple-system,sans-serif;
+  line-height:1.5;
+  font-variant-numeric:tabular-nums;
+}
+h1,h2,h3{
+  font-family:'Fraunces',Georgia,serif;
+  text-wrap:balance;
+  margin:0;
+  letter-spacing:-0.01em;
+}
+p{margin:0;}
+a{color:var(--accent);}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px;}
+
+/* header */
+.hero{
+  display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end;justify-content:space-between;
+  padding:32px 32px 28px;border-radius:20px;
+  background:linear-gradient(155deg,var(--surface),var(--surface-2));
+  border:1px solid var(--line);box-shadow:var(--shadow);
+  margin-bottom:28px;
+}
+.hero-eyebrow{
+  font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--marigold);margin-bottom:8px;display:block;
+}
+.hero h1{font-size:clamp(28px,4vw,40px);font-weight:600;}
+.hero-sub{color:var(--ink-muted);max-width:52ch;margin-top:10px;font-size:15px;}
+.hero-stats{display:flex;gap:22px;flex-wrap:wrap;}
+.stat{min-width:108px;}
+.stat-num{font-family:'Fraunces',serif;font-size:30px;font-weight:600;line-height:1;}
+.stat-label{font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;}
+.bar-track{width:100%;height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin-top:6px;}
+.bar-fill{height:100%;background:var(--accent);border-radius:99px;transition:width .3s ease;}
+
+/* pillars intro */
+.pillars{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:32px;
+}
+.pillar{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:14px 16px;
+}
+.pillar-chip{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:26px;height:26px;border-radius:8px;background:var(--accent-tint);color:var(--accent);
+  font-family:'Fraunces',serif;font-weight:700;font-size:13px;margin-bottom:8px;
+}
+.pillar h3{font-size:14px;font-weight:700;font-family:'Karla',sans-serif;}
+.pillar p{font-size:12.5px;color:var(--ink-muted);margin-top:4px;}
+
+/* layout */
+.layout{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start;}
+.side{display:flex;flex-direction:column;gap:24px;position:sticky;top:20px;}
+
+/* week cards */
+.week{
+  background:var(--surface);border:1px solid var(--line);border-radius:18px;
+  padding:24px;margin-bottom:20px;box-shadow:var(--shadow);
+}
+.week-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:6px;}
+.week-tag{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);}
+.week h2{font-size:22px;font-weight:600;margin-top:2px;}
+.week-progress{text-align:right;min-width:110px;}
+.week-progress .stat-num{font-size:18px;}
+.week-focus{color:var(--ink-muted);font-size:14px;margin:10px 0 18px;max-width:62ch;}
+
+.task{border-top:1px solid var(--line);padding:14px 0;}
+.task:first-of-type{border-top:none;}
+.task-head{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;}
+.task-chip{
+  font-family:'Fraunces',serif;font-weight:700;font-size:12px;
+  background:var(--accent-tint);color:var(--accent);border-radius:6px;
+  width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;flex:none;
+}
+.task-title{font-weight:700;font-size:14.5px;}
+.task-time{color:var(--ink-muted);font-size:12px;font-weight:400;}
+.task-desc{font-size:13.5px;color:var(--ink-muted);margin-left:32px;max-width:64ch;}
+.task-desc b{color:var(--ink);font-weight:700;}
+
+.days{
+  margin-left:32px;margin-top:10px;
+  display:grid;grid-template-columns:repeat(7,1fr);gap:6px;max-width:360px;
+}
+.day{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.day-label{font-size:9.5px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.04em;}
+.day input{
+  appearance:none;-webkit-appearance:none;width:22px;height:22px;border-radius:6px;
+  border:1.5px solid var(--line);background:var(--surface);cursor:pointer;position:relative;
+}
+.day input:checked{background:var(--done);border-color:var(--done);}
+.day input:checked::after{
+  content:"";position:absolute;left:6px;top:2px;width:5px;height:10px;
+  border:solid var(--surface);border-width:0 2px 2px 0;transform:rotate(40deg);
+}
+.day input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+/* sidebar */
+.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:18px;
+  padding:20px;box-shadow:var(--shadow);
+}
+.panel h2{font-size:17px;font-weight:600;margin-bottom:4px;}
+.panel-sub{font-size:12.5px;color:var(--ink-muted);margin-bottom:14px;}
+.tool-list{display:flex;flex-direction:column;gap:10px;}
+.tool{
+  border:1px solid var(--line);border-radius:12px;padding:10px 12px;
+  display:flex;flex-direction:column;gap:2px;background:var(--surface-2);
+}
+.tool-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+.tool-name{font-weight:700;font-size:13.5px;}
+.tool-type{font-size:10.5px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.05em;}
+.tag-free{
+  font-size:10px;font-weight:700;letter-spacing:.05em;color:var(--done);
+  background:var(--done-bg);padding:2px 7px;border-radius:99px;flex:none;
+}
+.tool-desc{font-size:12.5px;color:var(--ink-muted);}
+
+.tier{margin-bottom:16px;}
+.tier:last-child{margin-bottom:0;}
+.tier-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--marigold);margin-bottom:6px;}
+.song{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-top:1px solid var(--line);}
+.song:first-of-type{border-top:none;}
+.song-artist{color:var(--ink-muted);font-size:11.5px;}
+
+/* phrasebook */
+.phrase-section{margin-top:24px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.card-block{
+  background:var(--surface);border:1px solid var(--line);border-radius:18px;
+  padding:22px;box-shadow:var(--shadow);
+}
+.card-block h2{font-size:19px;font-weight:600;margin-bottom:14px;}
+.phrase{padding:9px 0;border-top:1px solid var(--line);font-size:13.5px;}
+.phrase:first-of-type{border-top:none;}
+.phrase-es{font-style:italic;}
+.phrase-ctx{display:block;color:var(--ink-muted);font-size:11.5px;margin-top:2px;}
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+td{padding:8px 6px;border-top:1px solid var(--line);}
+tr:first-child td{border-top:none;}
+td.es{font-style:italic;}
+td.pt{color:var(--ink-muted);text-align:right;}
+
+footer{margin-top:36px;color:var(--ink-muted);font-size:12.5px;text-align:center;}
+
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr;}
+  .side{position:static;}
+  .pillars{grid-template-columns:repeat(2,1fr);}
+  .two-col{grid-template-columns:1fr;}
+  .days{max-width:none;}
+}
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div>
+      <span class="hero-eyebrow">Plano gratuito &middot; foco 100% em fala</span>
+      <h1>Rumbo a México</h1>
+      <p class="hero-sub">28 dias de espanhol falado para a entrevista e o projeto com a equipe mexicana da Zappts — sem gastar nada, com ouvido, conversa real e a música que você já sabe tocar.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num" id="pct">0%</div>
+        <div class="stat-label">Progresso geral</div>
+        <div class="bar-track"><div class="bar-fill" id="barTotal" style="width:0%"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="daysDone">0<span style="font-size:16px;color:var(--ink-muted)">/28</span></div>
+        <div class="stat-label">Dias completos</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="pillars">
+    <div class="pillar"><span class="pillar-chip">O</span><h3>Ouvir</h3><p>Input em vídeo, sem cobrança de entender tudo.</p></div>
+    <div class="pillar"><span class="pillar-chip">E</span><h3>Estrutura</h3><p>Language Transfer — fala junto em voz alta.</p></div>
+    <div class="pillar"><span class="pillar-chip">M</span><h3>Música</h3><p>Canta, toca e treina o ouvido com ritmo.</p></div>
+    <div class="pillar"><span class="pillar-chip">C</span><h3>Conversa</h3><p>Voz real com parceiro mexicano, sem custo.</p></div>
+    <div class="pillar"><span class="pillar-chip">V</span><h3>Vocabulário</h3><p>Termos técnicos e frases de reunião.</p></div>
+  </section>
+
+  <div class="layout">
+    <main id="weeks"></main>
+
+    <aside class="side">
+      <div class="panel">
+        <h2>Caixa de ferramentas</h2>
+        <p class="panel-sub">Tudo grátis. Baixe no domingo antes de começar.</p>
+        <div class="tool-list" id="tools"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Trilha sonora</h2>
+        <p class="panel-sub">Do fácil ao gírio — sobe de nível junto com as semanas.</p>
+        <div id="playlist"></div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="phrase-section two-col">
+    <div class="card-block">
+      <h2>Frases de reunião</h2>
+      <div id="phrases"></div>
+    </div>
+    <div class="card-block">
+      <h2>Vocabulário técnico</h2>
+      <table id="vocab"></table>
+    </div>
+  </section>
+
+  <footer>Progresso salvo neste navegador. Reabra esta página todo dia — o ouvido se acostuma antes da boca, e a boca antes do medo passar.</footer>
+</div>
+
+<script>
+(function(){
+  var PILLARS = [
+    {code:"O", title:"Ouvir", time:"15 min"},
+    {code:"E", title:"Estrutura falada", time:"20-25 min"},
+    {code:"M", title:"Música", time:"15 min"},
+    {code:"C", title:"Conversa real", time:"10-20 min"},
+    {code:"V", title:"Vocabulário", time:"10 min"}
+  ];
+
+  var WEEKS = [
+    {
+      tag:"Semana 1", title:"Ouvido e base",
+      focus:"Nada de gramática pesada ainda. O objetivo é acostumar o ouvido com o espanhol mexicano e destravar a fala com repetição guiada. Português já te dá boa parte do vocabulário de graça — o resto é ritmo e coragem.",
+      tasks:[
+        "Assista a vídeos <b>Dreaming Spanish — nível Superbeginner</b> no YouTube. Só escute, sem se cobrar entender tudo.",
+        "<b>Language Transfer</b> (app/podcast grátis), curso de Espanhol — lições 1 a 5 essa semana. Fale em voz alta junto com o áudio, sempre.",
+        "<b>LyricsTraining</b> (grátis), modo Fácil — Marcos Witt (\"Renuévame\") ou Jesús Adrián Romero (\"Tu Fidelidad\"). Depois cante a música inteira uma vez, mesmo travando.",
+        "Ainda sem parceiro: grave um áudio de 1 min se apresentando em espanhol e ouça de volta.",
+        "Monte no Anki/Quizlet (grátis) um baralho <b>\"Apresentação pessoal\"</b> com 15 frases básicas."
+      ]
+    },
+    {
+      tag:"Semana 2", title:"Primeiras conversas",
+      focus:"Hora de sair da teoria e falar com gente de verdade. Vai errar muito — isso é esperado e faz parte do método.",
+      tasks:[
+        "<b>Dreaming Spanish — nível Beginner</b> + 1 vídeo do canal <b>Easy Spanish</b> (entrevistas de rua) por dia.",
+        "<b>Language Transfer</b>, lições 6 a 14.",
+        "<b>LyricsTraining</b> nível Médio — Miel San Marcos ou Christine D'Clario. Escolha uma música da semana pra decorar as 2 primeiras estrofes.",
+        "Crie conta no <b>HelloTalk</b> e/ou <b>Tandem</b> (grátis), filtre parceiros no México. Um áudio ou chamada curta por dia, mesmo 5 minutos.",
+        "Baralho <b>\"Tecnologia básica\"</b> — 15 termos (código, prueba, servidor, base de datos...)."
+      ]
+    },
+    {
+      tag:"Semana 3", title:"Fluência técnica",
+      focus:"Agora o foco é a reunião de trabalho de verdade: vocabulário de dev e simulação de perguntas de entrevista.",
+      tasks:[
+        "Canal <b>Superholly</b> (gírias mexicanas) + podcast <b>Español Automático</b> (histórias narradas devagar).",
+        "<b>Language Transfer</b>, lições 15 a 24 — revise as anteriores em dobro de velocidade.",
+        "Suba pro nível Difícil no LyricsTraining. Ouça <b>Redimi2</b> (rap cristão, fala mais rápida) só pra afinar o ouvido pro ritmo acelerado — não precisa cantar certo.",
+        "2 chamadas de voz por dia no HelloTalk/Tandem. Em uma delas, treine responder <i>\"cuéntame sobre tu último proyecto\"</i>.",
+        "Baralho <b>\"Entrevista técnica\"</b> — decore as frases-chave da seção abaixo."
+      ]
+    },
+    {
+      tag:"Semana 4", title:"Simulação real",
+      focus:"Última milha: juntar tudo numa simulação completa de entrevista e reunião em espanhol.",
+      tasks:[
+        "Vídeos do <b>Butterfly Spanish</b> focados em <i>entrevista de trabajo</i> e <i>reunión de equipo</i>.",
+        "<b>Language Transfer</b>, lições 25+ ou revisão livre das mais difíceis.",
+        "Pegue o violão e cante uma música inteira em espanhol de cabeça — teste de produção livre, não de leitura.",
+        "Peça ao parceiro do HelloTalk pra simular uma pequena entrevista técnica, ou use o <b>modo de voz do ChatGPT</b> (grátis) pra treinar sozinho.",
+        "Revisão geral de todos os baralhos anteriores — sem cards novos essa semana."
+      ]
+    }
+  ];
+
+  var TOOLS = [
+    {name:"Language Transfer", type:"App / Podcast", desc:"Método auditivo, sem escrita — ativa a fala rápido."},
+    {name:"Dreaming Spanish", type:"YouTube", desc:"Input compreensível por nível, treina o ouvido."},
+    {name:"HelloTalk", type:"App", desc:"Conversa por texto e voz com nativos mexicanos."},
+    {name:"Tandem", type:"App", desc:"Alternativa ao HelloTalk, mesma lógica de intercâmbio."},
+    {name:"LyricsTraining", type:"Site / App", desc:"Completa a letra da música enquanto ouve."},
+    {name:"Superholly", type:"YouTube", desc:"Gírias e cultura mexicana, sotaque autêntico."},
+    {name:"Butterfly Spanish", type:"YouTube", desc:"Conversação clara em espanhol latino."},
+    {name:"Easy Spanish", type:"YouTube", desc:"Entrevistas de rua em várias regiões."},
+    {name:"Español Automático", type:"Podcast", desc:"Histórias narradas devagar, boa transição."},
+    {name:"ChatGPT (voz)", type:"App / Web", desc:"Treino de conversa ilimitado, sem julgamento."},
+    {name:"Anki / Quizlet", type:"App", desc:"Flashcards de vocabulário, repetição espaçada."},
+    {name:"Duolingo", type:"App", desc:"10 min/dia de reforço de vocabulário (complementar)."}
+  ];
+
+  var PLAYLIST = [
+    {tier:"Fácil — dicção clara e lenta", songs:[["Renuévame","Marcos Witt"],["Tu Fidelidad","Jesús Adrián Romero"],["Cuán Grande es Él","Danilo Montero"]]},
+    {tier:"Médio", songs:[["Reyes y Sacerdotes","Miel San Marcos"],["Puedo Ver","Christine D'Clario"]]},
+    {tier:"Louvor animado — ainda claro", songs:[["Cambia mi Corazón","Marcos Witt"],["Alfa y Omega","Barak"]]},
+    {tier:"Avançado — mais rápido, treina o ouvido", songs:[["Abre los Cielos","Redimi2 (feat. Miel San Marcos)"]]}
+  ];
+
+  var PHRASES = [
+    {es:"Hola, mi nombre es Daniel, soy desarrollador full-stack con experiencia en Node.js, React e IA generativa.", ctx:"Abertura de apresentação"},
+    {es:"Tengo más de veinte años en operaciones y hace un año me dediqué de lleno al desarrollo de software.", ctx:"Contexto de carreira"},
+    {es:"Disculpa, ¿podrías repetir la pregunta, por favor?", ctx:"Pedir repetição sem travar"},
+    {es:"Dame un momento para pensarlo.", ctx:"Ganhar tempo com naturalidade"},
+    {es:"Voy a compartir mi pantalla.", ctx:"Reunião técnica"},
+    {es:"Estoy de acuerdo, aunque también podríamos considerar…", ctx:"Concordar com ressalva"},
+    {es:"No estoy seguro en este momento, pero lo voy a investigar y les aviso.", ctx:"Não saber sem travar a conversa"},
+    {es:"Quedo atento a cualquier duda, ¡muchas gracias por su tiempo!", ctx:"Fechar reunião"}
+  ];
+
+  var VOCAB = [
+    ["código heredado / legado","código legado"],
+    ["pruebas automatizadas","testes automatizados"],
+    ["control de versiones","controle de versão"],
+    ["integración continua","integração contínua"],
+    ["arquitectura","arquitetura"],
+    ["depuración","depuração"],
+    ["revisión de código","revisão de código"],
+    ["implementar / desplegar","implantar / deploy"],
+    ["requisitos","requisitos"],
+    ["tablero / panel","painel / dashboard"]
+  ];
+
+  var DAY_LABELS = ["S","T","Q","Q","S","S","D"];
+
+  var weeksEl = document.getElementById('weeks');
+  WEEKS.forEach(function(week, wi){
+    var card = document.createElement('div');
+    card.className = 'week';
+
+    var head = document.createElement('div');
+    head.className = 'week-head';
+    head.innerHTML =
+      '<div><span class="week-tag">'+week.tag+'</span><h2>'+week.title+'</h2></div>'+
+      '<div class="week-progress"><div class="stat-num" id="wpct-'+wi+'">0%</div>'+
+      '<div class="bar-track" style="width:110px"><div class="bar-fill" id="wbar-'+wi+'" style="width:0%"></div></div></div>';
+    card.appendChild(head);
+
+    var focus = document.createElement('p');
+    focus.className = 'week-focus';
+    focus.textContent = week.focus;
+    card.appendChild(focus);
+
+    week.tasks.forEach(function(desc, pi){
+      var task = document.createElement('div');
+      task.className = 'task';
+
+      var th = document.createElement('div');
+      th.className = 'task-head';
+      th.innerHTML =
+        '<span class="task-chip">'+PILLARS[pi].code+'</span>'+
+        '<span class="task-title">'+PILLARS[pi].title+' <span class="task-time">&middot; '+PILLARS[pi].time+'</span></span>';
+      task.appendChild(th);
+
+      var td = document.createElement('p');
+      td.className = 'task-desc';
+      td.innerHTML = desc;
+      task.appendChild(td);
+
+      var days = document.createElement('div');
+      days.className = 'days';
+      for (var d=0; d<7; d++){
+        var dayWrap = document.createElement('div');
+        dayWrap.className = 'day';
+        var lab = document.createElement('span');
+        lab.className = 'day-label';
+        lab.textContent = DAY_LABELS[d];
+        var box = document.createElement('input');
+        box.type = 'checkbox';
+        box.setAttribute('aria-label', PILLARS[pi].title+' dia '+(wi*7+d+1));
+        box.dataset.key = 'w'+wi+'-p'+pi+'-d'+d;
+        dayWrap.appendChild(lab);
+        dayWrap.appendChild(box);
+        days.appendChild(dayWrap);
+      }
+      task.appendChild(days);
+      card.appendChild(task);
+    });
+
+    weeksEl.appendChild(card);
+  });
+
+  var toolsEl = document.getElementById('tools');
+  TOOLS.forEach(function(t){
+    var el = document.createElement('div');
+    el.className = 'tool';
+    el.innerHTML =
+      '<div class="tool-top"><span class="tool-name">'+t.name+'</span><span class="tag-free">grátis</span></div>'+
+      '<span class="tool-type">'+t.type+'</span>'+
+      '<span class="tool-desc">'+t.desc+'</span>';
+    toolsEl.appendChild(el);
+  });
+
+  var playlistEl = document.getElementById('playlist');
+  PLAYLIST.forEach(function(tier){
+    var t = document.createElement('div');
+    t.className = 'tier';
+    var label = document.createElement('div');
+    label.className = 'tier-label';
+    label.textContent = tier.tier;
+    t.appendChild(label);
+    tier.songs.forEach(function(s){
+      var row = document.createElement('div');
+      row.className = 'song';
+      row.innerHTML = '<span>'+s[0]+'</span><span class="song-artist">'+s[1]+'</span>';
+      t.appendChild(row);
+    });
+    playlistEl.appendChild(t);
+  });
+
+  var phrasesEl = document.getElementById('phrases');
+  PHRASES.forEach(function(p){
+    var el = document.createElement('div');
+    el.className = 'phrase';
+    el.innerHTML = '<span class="phrase-es">"'+p.es+'"</span><span class="phrase-ctx">'+p.ctx+'</span>';
+    phrasesEl.appendChild(el);
+  });
+
+  var vocabEl = document.getElementById('vocab');
+  VOCAB.forEach(function(v){
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td class="es">'+v[0]+'</td><td class="pt">'+v[1]+'</td>';
+    vocabEl.appendChild(tr);
+  });
+
+  // ---- progress tracking (localStorage) ----
+  var STORE_KEY = 'rumbo_a_mexico_progress_v1';
+  var state = {};
+  try {
+    state = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+  } catch(e) { state = {}; }
+
+  var allBoxes = Array.prototype.slice.call(document.querySelectorAll('.day input[type="checkbox"]'));
+  allBoxes.forEach(function(box){
+    if (state[box.dataset.key]) box.checked = true;
+    box.addEventListener('change', function(){
+      try {
+        state[box.dataset.key] = box.checked;
+        localStorage.setItem(STORE_KEY, JSON.stringify(state));
+      } catch(e) {}
+      updateProgress();
+    });
+  });
+
+  function updateProgress(){
+    var total = allBoxes.length, checked = 0;
+    WEEKS.forEach(function(week, wi){
+      var wTotal = 0, wChecked = 0;
+      for (var pi=0; pi<5; pi++){
+        for (var d=0; d<7; d++){
+          var key = 'w'+wi+'-p'+pi+'-d'+d;
+          wTotal++;
+          if (state[key]) { wChecked++; checked++; }
+        }
+      }
+      var wPct = Math.round(100*wChecked/wTotal);
+      var pctEl = document.getElementById('wpct-'+wi);
+      var barEl = document.getElementById('wbar-'+wi);
+      if (pctEl) pctEl.textContent = wPct+'%';
+      if (barEl) barEl.style.width = wPct+'%';
+    });
+
+    var pct = Math.round(100*checked/total);
+    document.getElementById('pct').textContent = pct+'%';
+    document.getElementById('barTotal').style.width = pct+'%';
+
+    var daysDone = 0;
+    for (var wi=0; wi<4; wi++){
+      for (var d=0; d<7; d++){
+        var full = true;
+        for (var pi=0; pi<5; pi++){
+          if (!state['w'+wi+'-p'+pi+'-d'+d]) { full = false; break; }
+        }
+        if (full) daysDone++;
+      }
+    }
+    document.getElementById('daysDone').innerHTML = daysDone+'<span style="font-size:16px;color:var(--ink-muted)">/28</span>';
+  }
+
+  updateProgress();
+})();
+</script>
