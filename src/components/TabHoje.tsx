@@ -76,7 +76,7 @@ export function TabHoje({
           {PILLARS.map((pillar, pi) => {
             const key = `w${wi}-p${pi}-d${d}`;
             const checked = !!progress[key];
-            const taskHtml = WEEKS[wi]?.tasks[pi] || "";
+            const task = WEEKS[wi]?.tasks[pi];
             return (
               <div key={pi} className="rounded-[18px] p-4 md:p-5 flex gap-4 items-start transition" style={{ background: checked ? "#E8F5E9" : "#FFFEFA", border: `1px solid ${checked ? "#A5D6A7" : "#E8DCC3"}`, boxShadow: "0 1px 2px rgba(33,27,20,.04)" }}>
                 <div className="flex flex-col items-center gap-2">
@@ -91,7 +91,18 @@ export function TabHoje({
                     <div className="text-[11px] font-bold tracking-wide px-2 py-0.5 rounded-full" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3", color: "#6E6350" }}>{pillar.time}</div>
                     {checked && <span className="text-[11px] font-bold" style={{ color: "#006847" }}>• feito</span>}
                   </div>
-                  <div className="text-[13.5px] mt-1.5 leading-[1.5]" style={{ color: "#1A1A1A" }} dangerouslySetInnerHTML={{ __html: taskHtml }} />
+                  <div className="text-[13.5px] mt-1.5 leading-[1.5]" style={{ color: "#1A1A1A" }} dangerouslySetInnerHTML={{ __html: task?.desc || "" }} />
+                  {task?.url && (
+                    <a
+                      href={task.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 mt-3 text-[12px] font-bold px-3 py-1.5 rounded-full transition-all hover:brightness-95 active:scale-[0.98]"
+                      style={{ background: "#006847", color: "#fff" }}
+                    >
+                      ▶ Praticar agora
+                    </a>
+                  )}
                 </div>
               </div>
             );
