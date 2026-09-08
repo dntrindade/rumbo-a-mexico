@@ -27,7 +27,7 @@ export function TabHoje({
 }: TabHojeProps) {
   return (
     <div className="grid lg:grid-cols-[1fr_340px] gap-6 items-start">
-      <div>
+      <div className="min-w-0">
         {/* Caminho tracejado com cactozinho */}
         <div className="rounded-[18px] p-5 mb-5" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
           <div className="flex items-center justify-between mb-4">
@@ -111,8 +111,8 @@ export function TabHoje({
       </div>
 
       {/* Sidebar de progresso do dia */}
-      <aside className="lg:sticky lg:top-[84px] flex flex-col gap-4 self-start">
-        <div className="rounded-[18px] p-5" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
+      <aside className="lg:sticky lg:top-[84px] flex flex-col gap-4 self-start w-full">
+        <div className="rounded-[18px] p-5 border-t-4" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3", borderTopColor: "#006847", borderTopWidth: "4px" }}>
           <div className="flex items-center gap-2 mb-1">
             <img src={logoIcon} alt="" className="w-5 h-5" />
             <div className="fraunces font-bold text-[16px]">GYM Deserto</div>

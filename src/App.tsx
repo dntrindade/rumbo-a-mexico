@@ -55,7 +55,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: "#FDF6E3", color: "#1A1A1A" }}>
+    <div className="min-h-screen overflow-x-hidden" style={{ background: "#FDF6E3", color: "#1A1A1A" }}>
       <style>{GLOBAL_STYLE}</style>
 
       <Header
