@@ -48,11 +48,21 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
             <div className="text-[12px] mt-1" style={{ color: "#6E6350" }}>Baixe no domingo antes de começar • IDs preservados weeks, tools, playlist, phrases, vocab</div>
             <div id="tools" className="grid md:grid-cols-2 gap-3 mt-5">
               {TOOLS.map(t => (
-                <div key={t.name} className="rounded-xl p-3" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}>
-                  <div className="flex justify-between items-baseline"><span className="font-bold text-[13px]">{t.name}</span><span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#E8F5E9", color: "#006847" }}>grátis</span></div>
+                <a
+                  key={t.name}
+                  href={t.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-xl p-3 block cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5"
+                  style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}
+                >
+                  <div className="flex justify-between items-baseline">
+                    <span className="font-bold text-[13px]">{t.name} ↗</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#E8F5E9", color: "#006847" }}>grátis</span>
+                  </div>
                   <div className="text-[10px] tracking-widest font-bold mt-1" style={{ color: "#6E6350" }}>{t.type}</div>
                   <div className="text-[12px] mt-1" style={{ color: "#6E6350" }}>{t.desc}</div>
-                </div>
+                </a>
               ))}
             </div>
           </>
@@ -66,9 +76,15 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
                   <div className="text-[11px] font-bold tracking-widest" style={{ color: "#E86A33" }}>{tier.tier}</div>
                   <div className="mt-2 divide-y rounded-xl overflow-hidden" style={{ border: "1px solid #E8DCC3" }}>
                     {tier.songs.map(s => (
-                      <div key={s[0]} className="flex justify-between p-2.5 text-[13px] bg-[#FFFEFA]">
-                        <span className="font-medium">{s[0]}</span><span className="text-[11px]" style={{ color: "#6E6350" }}>{s[1]}</span>
-                      </div>
+                      <a
+                        key={s[0]}
+                        href={`https://www.youtube.com/results?search_query=${encodeURIComponent(s[0] + " " + s[1])}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex justify-between p-2.5 text-[13px] bg-[#FFFEFA] cursor-pointer transition-colors hover:bg-[#FDF6E3]"
+                      >
+                        <span className="font-medium">{s[0]} ↗</span><span className="text-[11px]" style={{ color: "#6E6350" }}>{s[1]}</span>
+                      </a>
                     ))}
                   </div>
                 </div>

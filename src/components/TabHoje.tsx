@@ -1,7 +1,6 @@
 import React from "react";
 import logoIcon from "../assets/logo_final_mexico_flag.png";
-import logoFull from "../assets/logo_mexico_flag_full.png";
-import { PILLARS, WEEKS, STORE_KEY } from "../data";
+import { PILLARS, WEEKS } from "../data";
 
 interface TabHojeProps {
   todayIndex: number;
@@ -98,28 +97,25 @@ export function TabHoje({
             );
           })}
         </div>
-
-        <div className="mt-6 text-[12px] text-center" style={{ color: "#6E6350" }}>
-          Progresso salvo automaticamente em <code className="px-1.5 py-0.5 rounded" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>{STORE_KEY}</code> • {checkedCount}/{total} tarefas
-        </div>
       </div>
 
-      {/* Sidebar afiliados + resumo */}
-      <aside className="flex flex-col gap-5">
+      {/* Sidebar de progresso do dia */}
+      <aside className="lg:sticky lg:top-[84px] flex flex-col gap-4 self-start">
         <div className="rounded-[18px] p-5" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
-          <div className="fraunces font-bold text-[16px]">Hoje • minutos</div>
+          <div className="flex items-center gap-2 mb-1">
+            <img src={logoIcon} alt="" className="w-5 h-5" />
+            <div className="fraunces font-bold text-[16px]">GYM Deserto</div>
+          </div>
+          <div className="text-[11px]" style={{ color: "#6E6350" }}>espanhol.dotapps.com.br</div>
+
+          <div className="h-px my-4" style={{ background: "#E8DCC3" }} />
+
+          <div className="fraunces font-bold text-[14px]">Hoje • minutos</div>
           <div className="text-[12px] mt-1" style={{ color: "#6E6350" }}>Meta Apple Watch: 60 min</div>
           <div className="mt-3 h-2 rounded-full overflow-hidden" style={{ background: "#E8DCC3" }}>
             <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, (minutesToday / 60) * 100)}%`, background: "#006847" }} />
           </div>
           <div className="text-[12px] mt-2 font-bold" style={{ color: "#006847" }}>{minutesToday} min feitos hoje</div>
-        </div>
-
-        <div className="rounded-[18px] p-4 flex gap-3 items-center" style={{ background: "#1A1A1A", color: "#FFFEFA" }}>
-          <img src={logoFull} alt="Logo completo" className="w-14 h-14 object-contain rounded-xl bg-white p-1" />
-          <div className="text-[12px] leading-tight">
-            <b>GYM Deserto</b> • espanhol.dotapps.com.br
-          </div>
         </div>
       </aside>
     </div>

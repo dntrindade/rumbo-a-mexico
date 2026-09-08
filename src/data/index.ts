@@ -61,18 +61,18 @@ export const WEEKS = [
 ];
 
 export const TOOLS = [
-  { name: "Language Transfer", type: "App / Podcast", desc: "Método auditivo, sem escrita — ativa a fala rápido." },
-  { name: "Dreaming Spanish", type: "YouTube", desc: "Input compreensível por nível, treina o ouvido." },
-  { name: "HelloTalk", type: "App", desc: "Conversa por texto e voz com nativos mexicanos." },
-  { name: "Tandem", type: "App", desc: "Alternativa ao HelloTalk, mesma lógica de intercâmbio." },
-  { name: "LyricsTraining", type: "Site / App", desc: "Completa a letra da música enquanto ouve." },
-  { name: "Superholly", type: "YouTube", desc: "Gírias e cultura mexicana, sotaque autêntico." },
-  { name: "Butterfly Spanish", type: "YouTube", desc: "Conversação clara em espanhol latino." },
-  { name: "Easy Spanish", type: "YouTube", desc: "Entrevistas de rua em várias regiões." },
-  { name: "Español Automático", type: "Podcast", desc: "Histórias narradas devagar, boa transição." },
-  { name: "ChatGPT (voz)", type: "App / Web", desc: "Treino de conversa ilimitado, sem julgamento." },
-  { name: "Anki / Quizlet", type: "App", desc: "Flashcards de vocabulário, repetição espaçada." },
-  { name: "Duolingo", type: "App", desc: "10 min/dia de reforço de vocabulário (complementar)." },
+  { name: "Language Transfer", type: "App / Podcast", desc: "Método auditivo, sem escrita — ativa a fala rápido.", url: "https://www.languagetransfer.org/" },
+  { name: "Dreaming Spanish", type: "YouTube", desc: "Input compreensível por nível, treina o ouvido.", url: "https://www.dreamingspanish.com/" },
+  { name: "HelloTalk", type: "App", desc: "Conversa por texto e voz com nativos mexicanos.", url: "https://www.hellotalk.com/" },
+  { name: "Tandem", type: "App", desc: "Alternativa ao HelloTalk, mesma lógica de intercâmbio.", url: "https://www.tandem.net/" },
+  { name: "LyricsTraining", type: "Site / App", desc: "Completa a letra da música enquanto ouve.", url: "https://lyricstraining.com/" },
+  { name: "Superholly", type: "YouTube", desc: "Gírias e cultura mexicana, sotaque autêntico.", url: "https://www.youtube.com/@superholly" },
+  { name: "Butterfly Spanish", type: "YouTube", desc: "Conversação clara em espanhol latino.", url: "https://www.youtube.com/@ButterflySpanish" },
+  { name: "Easy Spanish", type: "YouTube", desc: "Entrevistas de rua em várias regiões.", url: "https://www.youtube.com/@EasySpanish" },
+  { name: "Español Automático", type: "Podcast", desc: "Histórias narradas devagar, boa transição.", url: "https://www.espanolautomatico.com/" },
+  { name: "ChatGPT (voz)", type: "App / Web", desc: "Treino de conversa ilimitado, sem julgamento.", url: "https://chatgpt.com/" },
+  { name: "Anki / Quizlet", type: "App", desc: "Flashcards de vocabulário, repetição espaçada.", url: "https://apps.ankiweb.net/" },
+  { name: "Duolingo", type: "App", desc: "10 min/dia de reforço de vocabulário (complementar).", url: "https://www.duolingo.com/" },
 ];
 
 export const PLAYLIST = [

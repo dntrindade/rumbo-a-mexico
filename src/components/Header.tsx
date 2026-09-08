@@ -21,41 +21,43 @@ export function Header({
   todayIndex,
 }: HeaderProps) {
   return (
-    <header
-      className="sticky top-0 z-30 backdrop-blur-xl border-b"
-      style={{ background: "rgba(255,254,250,0.9)", borderColor: "#E8DCC3" }}
-    >
-      <div className="max-w-[1180px] mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <img
-            src={logoIcon}
-            alt="Logo México"
-            className="w-9 h-9 rounded-xl object-contain bg-white shadow-sm border"
-            style={{ borderColor: "#E8DCC3" }}
-          />
-          <div className="flex items-baseline gap-1.5">
-            <span className="fraunces font-extrabold tracking-tight text-[18px] md:text-[20px]" style={{ color: "#006847" }}>RUMBO</span>
-            <span className="fraunces font-extrabold tracking-tight text-[18px] md:text-[20px]" style={{ color: "#CE1126" }}>A MÉXICO</span>
-            <span className="hidden md:inline ml-2 text-[11px] font-bold tracking-widest px-2 py-0.5 rounded-full" style={{ background: "#FDF6E3", color: "#6E6350", border: "1px solid #E8DCC3" }}>GYM DESERTO</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="hidden md:flex items-center gap-3 mr-2">
-            <div className="text-right leading-none">
-              <div className="text-[11px] tracking-widest font-bold" style={{ color: "#6E6350" }}>SEQUÊNCIA</div>
-              <div className="fraunces font-bold text-[16px]">{currentStreak} dias</div>
-            </div>
-            <div className="w-px h-8" style={{ background: "#E8DCC3" }} />
-            <div className="text-right leading-none">
-              <div className="text-[11px] tracking-widest font-bold" style={{ color: "#6E6350" }}>MELHOR</div>
-              <div className="fraunces font-bold text-[16px]">{bestStreak}</div>
+    <>
+      <header
+        className="sticky top-0 z-30 backdrop-blur-xl border-b"
+        style={{ background: "rgba(255,254,250,0.9)", borderColor: "#E8DCC3" }}
+      >
+        <div className="max-w-[1180px] mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <img
+              src={logoIcon}
+              alt="Logo México"
+              className="w-9 h-9 rounded-xl object-contain bg-white shadow-sm border"
+              style={{ borderColor: "#E8DCC3" }}
+            />
+            <div className="flex items-baseline gap-1.5">
+              <span className="fraunces font-extrabold tracking-tight text-[18px] md:text-[20px]" style={{ color: "#006847" }}>RUMBO</span>
+              <span className="fraunces font-extrabold tracking-tight text-[18px] md:text-[20px]" style={{ color: "#CE1126" }}>A MÉXICO</span>
+              <span className="hidden md:inline ml-2 text-[11px] font-bold tracking-widest px-2 py-0.5 rounded-full" style={{ background: "#FDF6E3", color: "#6E6350", border: "1px solid #E8DCC3" }}>GYM DESERTO</span>
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-3 mr-2">
+              <div className="text-right leading-none">
+                <div className="text-[11px] tracking-widest font-bold" style={{ color: "#6E6350" }}>SEQUÊNCIA</div>
+                <div className="fraunces font-bold text-[16px]">{currentStreak} dias</div>
+              </div>
+              <div className="w-px h-8" style={{ background: "#E8DCC3" }} />
+              <div className="text-right leading-none">
+                <div className="text-[11px] tracking-widest font-bold" style={{ color: "#6E6350" }}>MELHOR</div>
+                <div className="fraunces font-bold text-[16px]">{bestStreak}</div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </header>
 
-      {/* HERO COM 3 ANÉIS APPLE WATCH */}
-      <div className="max-w-[1180px] mx-auto px-4 md:px-6 pb-5 pt-2">
+      {/* HERO COM 3 ANÉIS APPLE WATCH — rola normal com a página */}
+      <div className="max-w-[1180px] mx-auto px-4 md:px-6 pb-5 pt-5">
         <div
           className="rounded-[20px] p-4 md:p-6 flex flex-col md:flex-row gap-6 items-center md:items-end justify-between shadow-[0_1px_2px_rgba(33,27,20,.06),0_8px_24px_-10px_rgba(33,27,20,.15)]"
           style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}
@@ -114,6 +116,6 @@ export function Header({
           </div>
         </div>
       </div>
-    </header>
+    </>
   );
 }
