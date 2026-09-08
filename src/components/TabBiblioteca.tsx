@@ -1,7 +1,6 @@
 import React from "react";
 import logoIcon from "../assets/logo_final_mexico_flag.png";
-import logoFull from "../assets/logo_mexico_flag_full.png";
-import { TOOLS, PLAYLIST, PHRASES, VOCAB, STORE_KEY } from "../data";
+import { TOOLS, PLAYLIST, PHRASES, VOCAB } from "../data";
 
 export type BiblioTabId = "ferramentas" | "musicas" | "frases" | "vocab";
 
@@ -22,9 +21,11 @@ interface TabBibliotecaProps {
 }
 
 export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, daysDoneCount, currentStreak }: TabBibliotecaProps) {
+  const totalSongs = PLAYLIST.reduce((acc, t) => acc + t.songs.length, 0);
+
   return (
-    <div className="grid lg:grid-cols-[220px_1fr_300px] gap-6">
-      <div className="rounded-[18px] p-3 h-fit sticky top-[148px]" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
+    <div className="grid lg:grid-cols-[220px_1fr_300px] gap-6 items-start">
+      <div className="rounded-[18px] p-3 h-fit lg:sticky lg:top-[84px]" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
         {BIBLIO_TABS.map(it => (
           <button
             key={it.id}
@@ -36,16 +37,16 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
           </button>
         ))}
         <div className="mt-4 p-3 rounded-xl" style={{ background: "#FDF6E3", border: "1px dashed #E8DCC3" }}>
-          <div className="text-[11px] font-bold tracking-widest" style={{ color: "#6E6350" }}>DICA GYM DESERTO</div>
-          <div className="text-[12px] mt-1 leading-snug">Use o ícone <img src={logoIcon} alt="" className="inline w-4 h-4" /> em loading / empty states — já aplicado.</div>
+          <div className="text-[11px] font-bold tracking-widest" style={{ color: "#6E6350" }}>DICA</div>
+          <div className="text-[12px] mt-1 leading-snug">Todo recurso aqui abre em nova aba, direto pra prática.</div>
         </div>
       </div>
 
       <div className="rounded-[18px] p-5 md:p-6 min-h-[420px]" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
         {biblioTab === "ferramentas" && (
           <>
-            <div className="fraunces font-extrabold text-[20px]">Caixa de ferramentas • tudo grátis</div>
-            <div className="text-[12px] mt-1" style={{ color: "#6E6350" }}>Baixe no domingo antes de começar • IDs preservados weeks, tools, playlist, phrases, vocab</div>
+            <div className="fraunces font-extrabold text-[20px]">Caixa de Ferramentas</div>
+            <div className="text-[13px] mt-1" style={{ color: "#6E6350" }}>{TOOLS.length} recursos gratuitos, um clique de distância</div>
             <div id="tools" className="grid md:grid-cols-2 gap-3 mt-5">
               {TOOLS.map(t => (
                 <a
@@ -53,15 +54,16 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
                   href={t.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-xl p-3 block cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5"
+                  className="rounded-xl p-3.5 block cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5"
                   style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}
                 >
                   <div className="flex justify-between items-baseline">
-                    <span className="font-bold text-[13px]">{t.name} ↗</span>
+                    <span className="font-bold text-[13px]">{t.name}</span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#E8F5E9", color: "#006847" }}>grátis</span>
                   </div>
                   <div className="text-[10px] tracking-widest font-bold mt-1" style={{ color: "#6E6350" }}>{t.type}</div>
-                  <div className="text-[12px] mt-1" style={{ color: "#6E6350" }}>{t.desc}</div>
+                  <div className="text-[12px] mt-1.5" style={{ color: "#6E6350" }}>{t.desc}</div>
+                  <div className="text-[12px] font-bold mt-2" style={{ color: "#2757A6" }}>Acessar →</div>
                 </a>
               ))}
             </div>
@@ -69,7 +71,8 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
         )}
         {biblioTab === "musicas" && (
           <>
-            <div className="fraunces font-extrabold text-[20px]">Trilha sonora</div>
+            <div className="fraunces font-extrabold text-[20px]">Trilha Sonora</div>
+            <div className="text-[13px] mt-1" style={{ color: "#6E6350" }}>{totalSongs} músicas anotadas por dificuldade</div>
             <div id="playlist" className="mt-5 grid gap-5">
               {PLAYLIST.map(tier => (
                 <div key={tier.tier}>
@@ -81,9 +84,10 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
                         href={`https://www.youtube.com/results?search_query=${encodeURIComponent(s[0] + " " + s[1])}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex justify-between p-2.5 text-[13px] bg-[#FFFEFA] cursor-pointer transition-colors hover:bg-[#FDF6E3]"
+                        className="flex justify-between items-center p-3 text-[13px] bg-[#FFFEFA] cursor-pointer transition-colors hover:bg-[#FDF6E3]"
                       >
-                        <span className="font-medium">{s[0]} ↗</span><span className="text-[11px]" style={{ color: "#6E6350" }}>{s[1]}</span>
+                        <span className="font-bold">🎵 {s[0]}</span>
+                        <span className="text-[11px]" style={{ color: "#6E6350" }}>{s[1]}</span>
                       </a>
                     ))}
                   </div>
@@ -94,12 +98,13 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
         )}
         {biblioTab === "frases" && (
           <>
-            <div className="fraunces font-extrabold text-[20px]">Frases de reunião</div>
-            <div id="phrases" className="mt-4 divide-y" style={{ borderColor: "#E8DCC3" }}>
+            <div className="fraunces font-extrabold text-[20px]">Frases de Reunião</div>
+            <div className="text-[13px] mt-1" style={{ color: "#6E6350" }}>{PHRASES.length} frases prontas para contexto profissional</div>
+            <div id="phrases" className="mt-4 grid gap-3">
               {PHRASES.map((p, i) => (
-                <div key={i} className="py-3">
-                  <div className="italic text-[13.5px]">"{p.es}"</div>
-                  <div className="text-[11px] mt-1" style={{ color: "#6E6350" }}>{p.ctx}</div>
+                <div key={i} className="rounded-xl p-3.5" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}>
+                  <div className="italic text-[14px] font-medium">"{p.es}"</div>
+                  <div className="text-[11px] mt-1.5 font-bold" style={{ color: "#6E6350" }}>{p.ctx}</div>
                 </div>
               ))}
             </div>
@@ -107,32 +112,46 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
         )}
         {biblioTab === "vocab" && (
           <>
-            <div className="fraunces font-extrabold text-[20px]">Vocabulário técnico</div>
-            <table id="vocab" className="w-full mt-4 text-[13px]">
-              <tbody>
-                {VOCAB.map((v, i) => (
-                  <tr key={i} className="border-t" style={{ borderColor: "#E8DCC3" }}>
-                    <td className="py-2 italic">{v[0]}</td><td className="py-2 text-right" style={{ color: "#6E6350" }}>{v[1]}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="fraunces font-extrabold text-[20px]">Vocabulário Técnico</div>
+            <div className="text-[13px] mt-1" style={{ color: "#6E6350" }}>{VOCAB.length} termos comuns em reuniões de dev</div>
+            <div className="mt-4 grid gap-2">
+              {VOCAB.map((v, i) => (
+                <div key={i} className="flex justify-between items-center rounded-xl p-3" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}>
+                  <span className="italic text-[13px]">{v[0]}</span>
+                  <span className="text-[13px] font-bold" style={{ color: "#006847" }}>{v[1]}</span>
+                </div>
+              ))}
+            </div>
           </>
         )}
       </div>
 
-      <div className="flex flex-col gap-4">
-        <div className="rounded-[18px] p-5" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
-          <div className="fraunces font-bold">Resumo rápido</div>
-          <div className="text-[12px] mt-2 space-y-1" style={{ color: "#6E6350" }}>
-            <div>• {checkedCount} / {total} tarefas</div>
-            <div>• {daysDoneCount}/28 dias completos</div>
-            <div>• Streak atual {currentStreak} dias</div>
-            <div>• Key localStorage: {STORE_KEY}</div>
+      <aside className="flex flex-col gap-5 lg:sticky lg:top-[84px]">
+        <div className="rounded-[18px] p-5 md:p-6" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
+          <div className="fraunces font-extrabold text-[17px] mb-4">Sua Jornada</div>
+          <div className="flex flex-col gap-3 text-[13px]">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full" style={{ background: "#006847" }} />Tarefas feitas</span>
+              <b>{checkedCount} / {total}</b>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full" style={{ background: "#E86A33" }} />Dias completos</span>
+              <b style={{ color: "#E86A33" }}>{daysDoneCount}/28</b>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full" style={{ background: "#CE1126" }} />Ofensiva</span>
+              <b style={{ color: "#CE1126" }}>{currentStreak} {currentStreak === 1 ? "dia" : "dias"}</b>
+            </div>
           </div>
-          <img src={logoFull} alt="logo full" className="mt-4 w-full rounded-xl border p-2 bg-white" style={{ borderColor: "#E8DCC3" }} />
         </div>
-      </div>
+
+        <div className="rounded-[18px] p-4 flex items-center gap-3" style={{ background: "#FDF6E3", border: "1px dashed #E8DCC3" }}>
+          <img src={logoIcon} alt="" className="w-8 h-8 shrink-0" />
+          <div className="text-[11px] leading-snug" style={{ color: "#6E6350" }}>
+            Todos os recursos desta biblioteca são gratuitos e verificados.
+          </div>
+        </div>
+      </aside>
     </div>
   );
 }
