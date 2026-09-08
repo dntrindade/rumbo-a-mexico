@@ -1,5 +1,4 @@
 import React from "react";
-import logoIcon from "../assets/logo_final_mexico_flag.png";
 import { PILLARS, WEEKS } from "../data";
 
 interface TabHojeProps {
@@ -18,115 +17,187 @@ interface TabHojeProps {
   minutesToday: number;
   checkedCount: number;
   total: number;
+  currentStreak: number;
 }
 
+const PILLAR_ICON: Record<string, string> = {
+  O: "🎧",
+  E: "🗣️",
+  M: "🎵",
+  C: "💬",
+  V: "📚",
+};
+
 export function TabHoje({
-  todayIndex, wi, d, pct, daysDoneArray, progress, updateProgress,
-  clickTick, setClickTick, lastAction, setLastAction, setTodayIndex,
-  minutesToday, checkedCount, total,
+  todayIndex, wi, d, pct, progress, updateProgress,
+  minutesToday, checkedCount, total, currentStreak,
 }: TabHojeProps) {
+  // Pilar ativo = primeiro não concluído hoje. Se todos concluídos, mostra o último como revisão.
+  const activeIndex = PILLARS.findIndex((_, pi) => !progress[`w${wi}-p${pi}-d${d}`]);
+  const allDone = activeIndex === -1;
+  const heroIndex = allDone ? PILLARS.length - 1 : activeIndex;
+  const heroPillar = PILLARS[heroIndex];
+  const heroTask = WEEKS[wi]?.tasks[heroIndex];
+
   return (
-    <div className="grid lg:grid-cols-[1fr_340px] gap-6 items-start">
-      <div className="min-w-0">
-        {/* Caminho tracejado com cactozinho */}
-        <div className="rounded-[18px] p-5 mb-5" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
-          <div className="flex items-center justify-between mb-4">
-            <div className="fraunces font-bold text-[18px]">Dia {todayIndex + 1} • {WEEKS[wi]?.tag} — {WEEKS[wi]?.title}</div>
-            <div className="text-[11px] font-bold tracking-widest px-2 py-1 rounded-full" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3", color: "#6E6350" }}>{WEEKS[wi]?.focus.slice(0, 28)}...</div>
-          </div>
-          {/* desert trail */}
-          <div className="relative h-[56px] rounded-xl flex items-center px-3" style={{ background: "linear-gradient(90deg,#FDF6E3 0%,#FFFEFA 100%)", border: "1px dashed #E8DCC3" }}>
-            <div className="absolute left-3 right-3 top-1/2 h-0 border-t-[3px] border-dashed" style={{ borderColor: "#E8DCC3" }} />
-            <div className="absolute top-1/2 -translate-y-1/2 transition-all duration-700" style={{ left: `calc(${Math.max(6, Math.min(92, pct))}% )`, transform: "translate(-50%,-50%)" }}>
-              <div className="w-8 h-8 rounded-full grid place-items-center text-[18px] shadow" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>🌵</div>
+    <div className="grid lg:grid-cols-[1fr_360px] gap-6 items-start">
+      <div className="min-w-0 flex flex-col gap-6">
+        {/* TAREFA ATIVA DO DIA */}
+        <div className="rounded-[18px] p-5 md:p-6" style={{ background: "#FFFEFA", border: "2px solid #E86A33" }}>
+          <div className="flex items-start justify-between gap-3 flex-wrap mb-3">
+            <div className="flex items-center gap-2 text-[12px] font-bold tracking-wide" style={{ color: "#E86A33" }}>
+              <span className="text-[16px]">{heroPillar.full === "Ouvir" ? "👂" : PILLAR_ICON[heroPillar.code]}</span>
+              {allDone ? `DIA ${todayIndex + 1} CONCLUÍDO` : `TAREFA ATIVA DO DIA ${todayIndex + 1}`}
             </div>
-            <div className="flex justify-between w-full relative z-10">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="w-2 h-2 rounded-full" style={{ background: pct > i * 20 ? "#006847" : "#E8DCC3" }} />
-              ))}
-            </div>
+            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full" style={{ background: "#FFF1E6", color: "#C9701E" }}>
+              {allDone ? "COMPLETO ✓" : "EM ANDAMENTO"}
+            </span>
           </div>
-          {/* day selector */}
-          <div className="flex gap-1.5 mt-4 overflow-x-auto pb-1">
-            {Array.from({ length: 28 }).map((_, i) => {
-              const isDone = daysDoneArray[i];
-              const isToday = i === todayIndex;
+          <div className="fraunces font-extrabold text-[24px] leading-tight mb-2">{heroPillar.title}</div>
+          <div className="text-[14px] leading-[1.6] mb-4" style={{ color: "#4A4A4A" }} dangerouslySetInnerHTML={{ __html: heroTask?.desc || "" }} />
+          {heroTask?.url && (
+            <div className="flex items-center gap-3 flex-wrap">
+              <a
+                href={heroTask.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-[14px] font-bold px-5 py-2.5 rounded-full text-white transition-all hover:brightness-105 active:scale-[0.98]"
+                style={{ background: "#E86A33" }}
+              >
+                ▶ Praticar agora ({heroPillar.time})
+              </a>
+              {!allDone && (
+                <span className="text-[12px]" style={{ color: "#6E6350" }}>
+                  {checkedCount}/{total} tarefas do desafio concluídas
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* SEU BARALHO DE HOJE */}
+        <div>
+          <div className="fraunces font-extrabold text-[19px] mb-3">Seu baralho de hoje • Dia {todayIndex + 1}</div>
+          <div className="flex flex-col gap-3">
+            {PILLARS.map((pillar, pi) => {
+              const key = `w${wi}-p${pi}-d${d}`;
+              const checked = !!progress[key];
+              const isActive = pi === heroIndex && !allDone;
+              const task = WEEKS[wi]?.tasks[pi];
+              const borderColor = checked ? "#006847" : isActive ? "#E86A33" : "#E8DCC3";
+              const bg = checked ? "#F0F9F1" : "#FFFEFA";
+
               return (
-                <button
-                  key={i}
-                  onClick={() => { setTodayIndex(i); setClickTick(c => c + 1); setLastAction(`Dia ${i + 1} selecionado • clique ${clickTick + 1}`); }}
-                  className={`shrink-0 w-9 h-9 rounded-full grid place-items-center text-[12px] font-bold border transition ${isToday ? "text-white" : ""}`}
-                  style={{
-                    background: isDone ? "#006847" : isToday ? "#E86A33" : "#FFFEFA",
-                    color: isDone || isToday ? "#fff" : "#6E6350",
-                    borderColor: isDone ? "#006847" : isToday ? "#E86A33" : "#E8DCC3",
-                    boxShadow: isToday ? "0 0 0 3px #FFD6BA" : "none",
-                  }}
+                <div
+                  key={pi}
+                  className="rounded-[16px] p-4 md:p-5 relative transition-all"
+                  style={{ background: bg, border: `${isActive ? "2px" : "1px"} solid ${borderColor}` }}
                 >
-                  {i + 1}
-                </button>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[18px]">{PILLAR_ICON[pillar.code]}</span>
+                      <div>
+                        <div className="font-bold text-[15px]">{pillar.title}</div>
+                        <div className="text-[11px] flex items-center gap-1" style={{ color: "#6E6350" }}>
+                          🕐 {pillar.time}
+                        </div>
+                      </div>
+                    </div>
+
+                    {checked ? (
+                      <button
+                        onClick={() => updateProgress(key, false)}
+                        aria-label="Marcar como não concluído"
+                        className="w-7 h-7 rounded-full grid place-items-center text-white text-[13px] font-bold shrink-0"
+                        style={{ background: "#006847" }}
+                      >
+                        ✓
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => updateProgress(key, true)}
+                        className="text-[10px] font-bold tracking-wide px-2.5 py-1 rounded-full shrink-0 transition hover:brightness-95"
+                        style={{
+                          background: isActive ? "#FFF1E6" : "#F1EAD9",
+                          color: isActive ? "#C9701E" : "#8A7F68",
+                        }}
+                      >
+                        {isActive ? "ATIVO" : "PENDENTE"}
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="text-[13px] mt-2 leading-[1.5]" style={{ color: "#4A4A4A" }} dangerouslySetInnerHTML={{ __html: task?.desc || "" }} />
+
+                  {!checked && task?.url && (
+                    isActive ? (
+                      <a
+                        href={task.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-center mt-3 text-[13px] font-bold py-2 rounded-full text-white transition-all hover:brightness-105"
+                        style={{ background: "#E86A33" }}
+                      >
+                        Praticar agora
+                      </a>
+                    ) : (
+                      <a
+                        href={task.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block mt-2 text-[12px] font-bold"
+                        style={{ color: "#2757A6" }}
+                      >
+                        Praticar agora →
+                      </a>
+                    )
+                  )}
+                </div>
               );
             })}
           </div>
-          {lastAction && <div className="mt-2 text-[11px] font-bold" style={{ color: "#006847" }}>{lastAction}</div>}
-        </div>
-
-        {/* 5 cards O E M C V */}
-        <div className="grid gap-4">
-          {PILLARS.map((pillar, pi) => {
-            const key = `w${wi}-p${pi}-d${d}`;
-            const checked = !!progress[key];
-            const task = WEEKS[wi]?.tasks[pi];
-            return (
-              <div key={pi} className="rounded-[18px] p-4 md:p-5 flex gap-4 items-start transition" style={{ background: checked ? "#E8F5E9" : "#FFFEFA", border: `1px solid ${checked ? "#A5D6A7" : "#E8DCC3"}`, boxShadow: "0 1px 2px rgba(33,27,20,.04)" }}>
-                <div className="flex flex-col items-center gap-2">
-                  <div className="w-9 h-9 rounded-[10px] grid place-items-center fraunces font-extrabold text-[15px]" style={{ background: checked ? "#006847" : "#FDF6E3", color: checked ? "#fff" : "#1A1A1A", border: "1px solid #E8DCC3" }}>{pillar.code}</div>
-                  <button aria-label={`Marcar ${pillar.title}`} onClick={() => updateProgress(key, !checked)} className="w-8 h-8 rounded-[10px] grid place-items-center border-2 transition-all active:scale-95" style={{ background: checked ? "#006847" : "#FFFEFA", borderColor: checked ? "#006847" : "#E8DCC3", width: "32px", height: "32px" }}>
-                    {checked && <span className="text-white text-[16px] font-bold">✓</span>}
-                  </button>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-baseline gap-2">
-                    <div className="fraunces font-bold text-[16px]">{pillar.title}</div>
-                    <div className="text-[11px] font-bold tracking-wide px-2 py-0.5 rounded-full" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3", color: "#6E6350" }}>{pillar.time}</div>
-                    {checked && <span className="text-[11px] font-bold" style={{ color: "#006847" }}>• feito</span>}
-                  </div>
-                  <div className="text-[13.5px] mt-1.5 leading-[1.5]" style={{ color: "#1A1A1A" }} dangerouslySetInnerHTML={{ __html: task?.desc || "" }} />
-                  {task?.url && (
-                    <a
-                      href={task.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 mt-3 text-[12px] font-bold px-3 py-1.5 rounded-full transition-all hover:brightness-95 active:scale-[0.98]"
-                      style={{ background: "#006847", color: "#fff" }}
-                    >
-                      ▶ Praticar agora
-                    </a>
-                  )}
-                </div>
-              </div>
-            );
-          })}
         </div>
       </div>
 
-      {/* Sidebar de progresso do dia */}
-      <aside className="lg:sticky lg:top-[84px] flex flex-col gap-4 self-start w-full">
-        <div className="rounded-[18px] p-5 border-t-4" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3", borderTopColor: "#006847", borderTopWidth: "4px" }}>
-          <div className="flex items-center gap-2 mb-1">
-            <img src={logoIcon} alt="" className="w-5 h-5" />
-            <div className="fraunces font-bold text-[16px]">GYM Deserto</div>
-          </div>
-          <div className="text-[11px]" style={{ color: "#6E6350" }}>espanhol.dotapps.com.br</div>
+      {/* MÉTRICAS DE CONQUISTA */}
+      <aside className="lg:sticky lg:top-[84px] self-start w-full">
+        <div className="rounded-[18px] p-5 md:p-6" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
+          <div className="fraunces font-extrabold text-[18px] mb-4">Métricas de Conquista</div>
 
-          <div className="h-px my-4" style={{ background: "#E8DCC3" }} />
-
-          <div className="fraunces font-bold text-[14px]">Hoje • minutos</div>
-          <div className="text-[12px] mt-1" style={{ color: "#6E6350" }}>Meta Apple Watch: 60 min</div>
-          <div className="mt-3 h-2 rounded-full overflow-hidden" style={{ background: "#E8DCC3" }}>
-            <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, (minutesToday / 60) * 100)}%`, background: "#006847" }} />
+          <div className="flex items-center gap-4 mb-5">
+            <div className="relative w-[86px] h-[86px] shrink-0">
+              <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="#E8DCC3" strokeWidth="10" />
+                <circle
+                  cx="50" cy="50" r="42" fill="none" stroke="#E86A33" strokeWidth="10" strokeLinecap="round"
+                  strokeDasharray={2 * Math.PI * 42}
+                  strokeDashoffset={2 * Math.PI * 42 * (1 - pct / 100)}
+                  style={{ transition: "stroke-dashoffset .6s ease" }}
+                />
+              </svg>
+              <div className="absolute inset-0 grid place-items-center">
+                <div className="text-center leading-none">
+                  <div className="fraunces font-extrabold text-[20px]">{pct}%</div>
+                </div>
+              </div>
+            </div>
+            <div className="text-[11px] font-bold tracking-wide" style={{ color: "#6E6350" }}>CONCLUÍDO</div>
           </div>
-          <div className="text-[12px] mt-2 font-bold" style={{ color: "#006847" }}>{minutesToday} min feitos hoje</div>
+
+          <div className="flex flex-col gap-3 text-[13px]">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full" style={{ background: "#006847" }} />Meta Diária</span>
+              <b>{minutesToday} / 60 min</b>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full" style={{ background: "#E86A33" }} />Trilha Geral</span>
+              <b style={{ color: "#E86A33" }}>{pct}% (Dia {todayIndex + 1}/28)</b>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full" style={{ background: "#CE1126" }} />Ofensiva</span>
+              <b style={{ color: "#CE1126" }}>{currentStreak} {currentStreak === 1 ? "dia" : "dias"}</b>
+            </div>
+          </div>
         </div>
       </aside>
     </div>

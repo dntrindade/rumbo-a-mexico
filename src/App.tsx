@@ -95,6 +95,7 @@ export default function App() {
             minutesToday={minutesToday}
             checkedCount={checkedCount}
             total={total}
+            currentStreak={currentStreak}
           />
         )}
 
