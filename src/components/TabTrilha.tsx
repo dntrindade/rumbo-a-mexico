@@ -1,6 +1,7 @@
 import React from "react";
 import { WEEKS } from "../data";
 import { TabId } from "./TabsNav";
+import trailBackground from "../assets/trail_background.jpg";
 
 interface TabTrilhaProps {
   todayIndex: number;
@@ -72,16 +73,16 @@ export function TabTrilha({
 
       <div className="grid lg:grid-cols-[1.6fr_1fr]">
         {/* TRAÇADO SINUOSO */}
-        <div className="relative overflow-hidden" style={{ background: "#FFFDF5" }}>
-          {/* textura de fundo sutil */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" opacity={0.5}>
-            <defs>
-              <pattern id="trail-dots" x="0" y="0" width="26" height="26" patternUnits="userSpaceOnUse">
-                <circle cx="1.5" cy="1.5" r="1.2" fill="#F1EAD9" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#trail-dots)" />
-          </svg>
+        <div
+          className="relative overflow-hidden"
+          style={{
+            backgroundImage: `linear-gradient(rgba(255,253,245,0.6), rgba(255,253,245,0.6)), url(${trailBackground})`,
+            backgroundSize: "100% auto",
+            backgroundPosition: "top center",
+            backgroundRepeat: "repeat-y",
+          }}
+        >
+          {/* textura de pontinhos removida em favor da imagem de fundo */}
 
           <div className="relative mx-auto max-w-[560px] px-2 py-8" style={{ height: trailHeight + 60 }}>
             <svg viewBox={`0 0 100 ${trailHeight}`} className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" style={{ top: 32 }}>
