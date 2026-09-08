@@ -46,4 +46,8 @@ export const GLOBAL_STYLE = `
   h1,h2,h3,.fraunces{font-family:'Fraunces',serif}
   .ring-bg{fill:none;stroke:#E8DCC3;stroke-width:8}
   .ring-fg{fill:none;stroke-width:8;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset .6s ease}
+  @keyframes pulseGlowTrail {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(232,106,51,0.35), 0 8px 24px rgba(232,106,51,0.3); }
+    50% { box-shadow: 0 0 0 10px rgba(232,106,51,0.12), 0 10px 28px rgba(232,106,51,0.4); }
+  }
 `;

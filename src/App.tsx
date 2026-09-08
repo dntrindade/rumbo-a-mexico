@@ -109,6 +109,7 @@ export default function App() {
             setLastAction={setLastAction}
             setTodayIndex={setTodayIndex}
             setActiveTab={setActiveTab}
+            currentStreak={currentStreak}
           />
         )}
 
