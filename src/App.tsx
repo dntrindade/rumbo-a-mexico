@@ -6,7 +6,6 @@ import { TabsNav, TabId } from "./components/TabsNav";
 import { TabHoje } from "./components/TabHoje";
 import { TabTrilha } from "./components/TabTrilha";
 import { TabBiblioteca, BiblioTabId } from "./components/TabBiblioteca";
-import { PremiumModal } from "./components/PremiumModal";
 import { CertModal } from "./components/CertModal";
 import { Footer } from "./components/Footer";
 
@@ -16,7 +15,6 @@ export default function App() {
   const [todayIndex, setTodayIndex] = useState(11); // Dia 12 como exemplo aprovado
   const [lastAction, setLastAction] = useState<string>("");
   const [clickTick, setClickTick] = useState(0);
-  const [showPremium, setShowPremium] = useState(false);
   const [showCert, setShowCert] = useState(false);
   const [hasCelebrated, setHasCelebrated] = useState(false);
 
@@ -68,7 +66,6 @@ export default function App() {
         daysDoneCount={daysDoneCount}
         minutesWeek={minutesWeek}
         todayIndex={todayIndex}
-        onPremiumClick={() => setShowPremium(true)}
       />
 
       <TabsNav activeTab={activeTab} onChange={setActiveTab} />
@@ -98,7 +95,6 @@ export default function App() {
             minutesToday={minutesToday}
             checkedCount={checkedCount}
             total={total}
-            onPremiumClick={() => setShowPremium(true)}
           />
         )}
 
@@ -128,8 +124,6 @@ export default function App() {
       </main>
 
       <Footer />
-
-      {showPremium && <PremiumModal onClose={() => setShowPremium(false)} />}
 
       {showCert && (
         <CertModal

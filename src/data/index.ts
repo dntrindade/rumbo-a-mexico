@@ -106,12 +106,6 @@ export const VOCAB: [string,string][] = [
   ["tablero / panel","painel / dashboard"]
 ];
 
-export const AFFILIATES = [
-  { name: "Duolingo Plus", tag: "comissão 5%", desc: "Reforço diário de vocabulário + sem anúncios. Ideal semanas 1-2.", color: "#58CC02" },
-  { name: "Anki Pro", tag: "comissão 3%", desc: "Baralhos ilimitados e sincronização. Para seu vocabulário técnico.", color: "#006847" },
-  { name: "ChatGPT Plus", tag: "comissão 2%", desc: "Modo de voz ilimitado para simular entrevista técnica.", color: "#10A37F" },
-];
-
 export const STORE_KEY = 'rumbo_a_mexico_progress_v1';
 
 export function getPillarMinutes(code: string) {

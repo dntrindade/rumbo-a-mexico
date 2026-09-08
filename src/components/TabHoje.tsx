@@ -1,7 +1,7 @@
 import React from "react";
 import logoIcon from "../assets/logo_final_mexico_flag.png";
 import logoFull from "../assets/logo_mexico_flag_full.png";
-import { PILLARS, WEEKS, AFFILIATES, STORE_KEY } from "../data";
+import { PILLARS, WEEKS, STORE_KEY } from "../data";
 
 interface TabHojeProps {
   todayIndex: number;
@@ -19,13 +19,12 @@ interface TabHojeProps {
   minutesToday: number;
   checkedCount: number;
   total: number;
-  onPremiumClick: () => void;
 }
 
 export function TabHoje({
   todayIndex, wi, d, pct, daysDoneArray, progress, updateProgress,
   clickTick, setClickTick, lastAction, setLastAction, setTodayIndex,
-  minutesToday, checkedCount, total, onPremiumClick,
+  minutesToday, checkedCount, total,
 }: TabHojeProps) {
   return (
     <div className="grid lg:grid-cols-[1fr_340px] gap-6 items-start">
@@ -116,33 +115,10 @@ export function TabHoje({
           <div className="text-[12px] mt-2 font-bold" style={{ color: "#006847" }}>{minutesToday} min feitos hoje</div>
         </div>
 
-        <div className="rounded-[18px] p-5" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
-          <div className="flex items-center justify-between">
-            <div className="fraunces font-bold text-[16px]">Afiliados</div>
-            <span className="text-[10px] font-bold tracking-widest px-2 py-0.5 rounded-full" style={{ background: "#FFF1E6", color: "#E86A33", border: "1px solid #FFD6BA" }}>COMISSÃO 2-5%</span>
-          </div>
-          <div className="grid gap-3 mt-3">
-            {AFFILIATES.map(a => (
-              <div key={a.name} className="rounded-xl p-3 flex gap-3 items-start" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}>
-                <div className="w-8 h-8 rounded-full shrink-0" style={{ background: a.color }} />
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <div className="font-bold text-[13px]">{a.name}</div>
-                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>{a.tag}</span>
-                  </div>
-                  <div className="text-[11.5px] mt-0.5" style={{ color: "#6E6350" }}>{a.desc}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <button onClick={onPremiumClick} className="w-full mt-3 py-2.5 rounded-full text-[12px] font-bold" style={{ background: "#1A1A1A", color: "#fff" }}>Ver links de afiliado →</button>
-        </div>
-
         <div className="rounded-[18px] p-4 flex gap-3 items-center" style={{ background: "#1A1A1A", color: "#FFFEFA" }}>
           <img src={logoFull} alt="Logo completo" className="w-14 h-14 object-contain rounded-xl bg-white p-1" />
           <div className="text-[12px] leading-tight">
-            <b>GYM Deserto</b> • espanhol.dotapps.com.br<br />
-            <span style={{ color: "#E8DCC3" }}>Expansões 8/12/16 semanas + outros idiomas em breve.</span>
+            <b>GYM Deserto</b> • espanhol.dotapps.com.br
           </div>
         </div>
       </aside>

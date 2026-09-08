@@ -1,16 +1,15 @@
 import React from "react";
 import logoIcon from "../assets/logo_final_mexico_flag.png";
 import logoFull from "../assets/logo_mexico_flag_full.png";
-import { TOOLS, PLAYLIST, PHRASES, VOCAB, AFFILIATES, STORE_KEY } from "../data";
+import { TOOLS, PLAYLIST, PHRASES, VOCAB, STORE_KEY } from "../data";
 
-export type BiblioTabId = "ferramentas" | "musicas" | "frases" | "vocab" | "afiliados";
+export type BiblioTabId = "ferramentas" | "musicas" | "frases" | "vocab";
 
 const BIBLIO_TABS: { id: BiblioTabId; label: string }[] = [
   { id: "ferramentas", label: "Ferramentas" },
   { id: "musicas", label: "Músicas" },
   { id: "frases", label: "Frases" },
   { id: "vocab", label: "Vocab" },
-  { id: "afiliados", label: "Afiliados ★" },
 ];
 
 interface TabBibliotecaProps {
@@ -102,30 +101,6 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
                 ))}
               </tbody>
             </table>
-          </>
-        )}
-        {biblioTab === "afiliados" && (
-          <>
-            <div className="flex items-center justify-between">
-              <div className="fraunces font-extrabold text-[20px]">Afiliados • monetização pronta</div>
-              <span className="text-[10px] font-bold px-2 py-1 rounded-full" style={{ background: "#FFF1E6", color: "#E86A33", border: "1px solid #FFD6BA" }}>COMISSÃO 2-5%</span>
-            </div>
-            <div className="grid gap-3 mt-5">
-              {AFFILIATES.map(a => (
-                <div key={a.name} className="rounded-xl p-4 flex gap-4 items-center" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}>
-                  <div className="w-12 h-12 rounded-xl" style={{ background: a.color }} />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2"><span className="font-bold">{a.name}</span><span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white border" style={{ borderColor: "#E8DCC3" }}>{a.tag}</span></div>
-                    <div className="text-[12px] mt-1" style={{ color: "#6E6350" }}>{a.desc}</div>
-                  </div>
-                  <button className="px-3 py-1.5 rounded-full text-[11px] font-bold text-white" style={{ background: "#1A1A1A" }}>Ver</button>
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 p-4 rounded-xl" style={{ background: "#1A1A1A", color: "#fff" }}>
-              <div className="font-bold">Estrutura visual sem backend</div>
-              <div className="text-[12px] mt-1" style={{ color: "#E8DCC3" }}>Basta trocar href pelos seus links de afiliado. Premium já está no header verde #006847.</div>
-            </div>
           </>
         )}
       </div>

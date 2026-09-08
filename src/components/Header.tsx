@@ -9,7 +9,6 @@ interface HeaderProps {
   daysDoneCount: number;
   minutesWeek: number;
   todayIndex: number;
-  onPremiumClick: () => void;
 }
 
 export function Header({
@@ -20,7 +19,6 @@ export function Header({
   daysDoneCount,
   minutesWeek,
   todayIndex,
-  onPremiumClick,
 }: HeaderProps) {
   return (
     <header
@@ -53,13 +51,6 @@ export function Header({
               <div className="fraunces font-bold text-[16px]">{bestStreak}</div>
             </div>
           </div>
-          <button
-            onClick={onPremiumClick}
-            className="px-4 py-2 rounded-full text-white text-[13px] font-bold tracking-wide hover:brightness-110 active:scale-[0.98] transition"
-            style={{ background: "#006847" }}
-          >
-            Premium
-          </button>
         </div>
       </div>
 
