@@ -1,135 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Rumbo a México - Aprenda espanhol em 28 dias">
-  <title>Rumbo a México - 28 Dias de Espanhol</title>
-  <link rel="icon" href="./favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="./css/style.css">
-</head>
-<body>
-  <!-- ===== HEADER ===== -->
-  <header class="header">
-    <div class="wrap" style="display: flex; justify-content: space-between; align-items: center;">
-      <div style="display: flex; align-items: center; gap: 16px;">
-        <img src="./assets/img/logo_final_mexico_flag.png" alt="Logo Rumbo a México" style="height: 50px;">
-        <div>
-          <h1 style="color: #006847; margin: 0; font-size: 24px; font-weight: 700;">RUMBO</h1>
-          <p style="color: #CE1126; margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.1em;">A MÉXICO</p>
-        </div>
-      </div>
-      <div style="display: flex; gap: 12px; align-items: center;">
-        <button id="theme-toggle" style="background: none; border: none; font-size: 24px; cursor: pointer; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">🌙</button>
-        <button id="premium-btn" style="background: #006847; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">💎 Premium</button>
-      </div>
-    </div>
-  </header>
-
-  <!-- ===== MAIN CONTENT ===== -->
-  <main class="wrap">
-    <!-- HERO SECTION -->
-    <section class="hero">
-      <h2>Aprenda Espanhol em 28 Dias</h2>
-      <p style="font-size: 18px; opacity: 0.95; margin-bottom: 24px;">Disciplina, força de vontade e resiliência</p>
-      
-      <div style="display: flex; gap: 32px; margin-bottom: 24px; flex-wrap: wrap;">
-        <div>
-          <div id="days-done" style="font-family: serif; font-size: 36px; font-weight: 700; line-height: 1;">0</div>
-          <div style="font-size: 12px; opacity: 0.85; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em;">dias completos</div>
-        </div>
-        <div>
-          <div id="progress-pct" style="font-family: serif; font-size: 36px; font-weight: 700; line-height: 1;">0%</div>
-          <div style="font-size: 12px; opacity: 0.85; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em;">progresso</div>
-        </div>
-      </div>
-
-      <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 99px; overflow: hidden;">
-        <div id="progress-fill" style="height: 100%; background: #E86A33; width: 0%; border-radius: 99px; transition: width 0.5s ease;"></div>
-      </div>
-    </section>
-
-    <!-- 5 PILARES -->
-    <section style="margin-bottom: 48px;">
-      <h3>5 Pilares Diários</h3>
-      <div id="pillars-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px;">
-        <!-- Preenchido por JS -->
-      </div>
-    </section>
-
-    <!-- LAYOUT: MAIN + SIDEBAR -->
-    <div style="display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start;">
-      <!-- SEMANAS -->
-      <div id="weeks-container">
-        <!-- Preenchido por JS -->
-      </div>
-
-      <!-- SIDEBAR -->
-      <aside style="position: sticky; top: 20px;">
-        <!-- TAB NAVIGATION -->
-        <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid #E2D9C4; overflow-x: auto; padding-bottom: 12px;">
-          <button class="tab-btn active" data-tab="tools" style="border: none; background: none; color: #6E6350; cursor: pointer; font-weight: 600; font-size: 13px; white-space: nowrap; transition: color 0.3s; padding-bottom: 8px;">🛠️ Ferramentas</button>
-          <button class="tab-btn" data-tab="playlist" style="border: none; background: none; color: #6E6350; cursor: pointer; font-weight: 600; font-size: 13px; white-space: nowrap; transition: color 0.3s; padding-bottom: 8px;">🎵 Playlist</button>
-          <button class="tab-btn" data-tab="phrases" style="border: none; background: none; color: #6E6350; cursor: pointer; font-weight: 600; font-size: 13px; white-space: nowrap; transition: color 0.3s; padding-bottom: 8px;">💬 Frases</button>
-          <button class="tab-btn" data-tab="biblioteca" style="border: none; background: none; color: #6E6350; cursor: pointer; font-weight: 600; font-size: 13px; white-space: nowrap; transition: color 0.3s; padding-bottom: 8px;">📚 Biblioteca</button>
-          <button class="tab-btn" data-tab="certificado" style="border: none; background: none; color: #6E6350; cursor: pointer; font-weight: 600; font-size: 13px; white-space: nowrap; transition: color 0.3s; padding-bottom: 8px;">🎓 Certificado</button>
-        </div>
-
-        <!-- TAB CONTENTS -->
-        <div style="background: white; border: 1px solid #E2D9C4; border-radius: 18px; padding: 20px; box-shadow: 0 1px 2px rgba(33,27,20,0.06);">
-          <!-- Tools -->
-          <div id="tools-pane" class="tab-pane" style="display: block;">
-            <h4>Ferramentas Recomendadas</h4>
-            <div id="tools-list" style="display: flex; flex-direction: column; gap: 16px;"></div>
-          </div>
-
-          <!-- Playlist -->
-          <div id="playlist-pane" class="tab-pane" style="display: none;">
-            <h4>Playlist Curada</h4>
-            <div id="playlist-list" style="display: flex; flex-direction: column; gap: 16px;"></div>
-          </div>
-
-          <!-- Phrases -->
-          <div id="phrases-pane" class="tab-pane" style="display: none;">
-            <h4>Frases Essenciais</h4>
-            <div id="phrases-list" style="display: flex; flex-direction: column; gap: 16px;"></div>
-          </div>
-
-          <!-- Biblioteca -->
-          <div id="biblioteca-pane" class="tab-pane" style="display: none;">
-            <h4>Biblioteca & Afiliados</h4>
-            <div id="biblioteca-list" style="display: flex; flex-direction: column; gap: 16px;"></div>
-          </div>
-
-          <!-- Certificado -->
-          <div id="certificado-pane" class="tab-pane" style="display: none;">
-            <h4>Seu Certificado</h4>
-            <div id="certificado-content" style="background: linear-gradient(135deg, #2757A6, #1a3a7d); color: white; padding: 24px; border-radius: 14px; text-align: center; min-height: 200px; display: flex; flex-direction: column; justify-content: center;"></div>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </main>
-
-  <!-- ===== FOOTER ===== -->
-  <footer style="background: #211B14; color: white; padding: 32px 0; margin-top: 48px; text-align: center; font-size: 14px;">
-    <div class="wrap">
-      <p>Rumbo a México © 2026 | Desenvolvido com ❤️</p>
-      <div style="display: flex; justify-content: center; gap: 24px; margin-top: 16px; flex-wrap: wrap;">
-        <a href="#" data-action="expand-8" style="color: #E86A33; text-decoration: none;">8 Semanas</a>
-        <a href="#" data-action="expand-12" style="color: #E86A33; text-decoration: none;">12 Semanas</a>
-        <a href="#" data-action="expand-16" style="color: #E86A33; text-decoration: none;">16 Semanas</a>
-        <a href="#" data-action="outros-idiomas" style="color: #E86A33; text-decoration: none;">Outros Idiomas</a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ===== SCRIPTS ===== -->
-  <script src="./js/modules/storage.js"></script>
-  <script src="./js/modules/utils.js"></script>
-  <script src="./js/modules/progress.js"></script>
-  <script src="./js/modules/ui.js"></script>
-  <script src="./js/modules/events.js"></script>
-  <script src="./js/app.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="./favicon.ico" sizes="any" />
+    <link rel="icon" href="./favicon-16.png" type="image/png" sizes="16x16" />
+    <link rel="icon" href="./favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="./favicon-64.png" type="image/png" sizes="64x64" />
+    <link rel="icon" href="./favicon-512.png" type="image/png" sizes="512x512" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" sizes="180x180" />
+    <title>Rumbo a México — GYM Deserto</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

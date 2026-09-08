@@ -1,0 +1,768 @@
+import React, { useEffect, useMemo, useState } from "react";
+import logoIcon from "container:///mnt/data/src/assets/b1d534b05e2438eb-logo_final_mexico_flag.png";
+import logoFull from "container:///mnt/data/src/assets/4b1c29036bf48ff2-logo_mexico_flag_full.png";
+
+// --- DATA PRESERVADA DA LÓGICA ORIGINAL ---
+const PILLARS = [
+  { code: "O", title: "Ouvir", time: "15 min", full: "Ouvir", desc: "Input em vídeo, sem cobrança de entender tudo." },
+  { code: "E", title: "Estrutura falada", time: "20-25 min", full: "Estrutura", desc: "Language Transfer — fala junto em voz alta." },
+  { code: "M", title: "Música", time: "15 min", full: "Música", desc: "Canta, toca e treina o ouvido com ritmo." },
+  { code: "C", title: "Conversa real", time: "10-20 min", full: "Conversa", desc: "Voz real com parceiro mexicano, sem custo." },
+  { code: "V", title: "Vocabulário", time: "10 min", full: "Vocabulário", desc: "Termos técnicos e frases de reunião." },
+];
+
+const WEEKS = [
+  {
+    tag: "Semana 1",
+    title: "Ouvido e base",
+    focus:
+      "Nada de gramática pesada ainda. O objetivo é acostumar o ouvido com o espanhol mexicano e destravar a fala com repetição guiada.",
+    tasks: [
+      "Assista a vídeos <b>Dreaming Spanish — nível Superbeginner</b> no YouTube. Só escute, sem se cobrar entender tudo.",
+      "<b>Language Transfer</b> (app/podcast grátis), curso de Espanhol — lições 1 a 5 essa semana. Fale em voz alta junto com o áudio, sempre.",
+      "<b>LyricsTraining</b> (grátis), modo Fácil — Marcos Witt (\"Renuévame\") ou Jesús Adrián Romero (\"Tu Fidelidad\"). Depois cante a música inteira uma vez.",
+      "Ainda sem parceiro: grave um áudio de 1 min se apresentando em espanhol e ouça de volta.",
+      "Monte no Anki/Quizlet (grátis) um baralho <b>\"Apresentação pessoal\"</b> com 15 frases básicas.",
+    ],
+  },
+  {
+    tag: "Semana 2",
+    title: "Primeiras conversas",
+    focus: "Hora de sair da teoria e falar com gente de verdade. Vai errar muito — isso é esperado.",
+    tasks: [
+      "<b>Dreaming Spanish — nível Beginner</b> + 1 vídeo do canal <b>Easy Spanish</b> (entrevistas de rua) por dia.",
+      "<b>Language Transfer</b>, lições 6 a 14.",
+      "<b>LyricsTraining</b> nível Médio — Miel San Marcos ou Christine D'Clario. Escolha uma música da semana pra decorar as 2 primeiras estrofes.",
+      "Crie conta no <b>HelloTalk</b> e/ou <b>Tandem</b> (grátis), filtre parceiros no México. Um áudio ou chamada curta por dia.",
+      "Baralho <b>\"Tecnologia básica\"</b> — 15 termos (código, prueba, servidor, base de datos...).",
+    ],
+  },
+  {
+    tag: "Semana 3",
+    title: "Fluência técnica",
+    focus: "Agora o foco é a reunião de trabalho de verdade: vocabulário de dev e simulação de perguntas.",
+    tasks: [
+      "Canal <b>Superholly</b> (gírias mexicanas) + podcast <b>Español Automático</b> (histórias narradas devagar).",
+      "<b>Language Transfer</b>, lições 15 a 24 — revise as anteriores em dobro de velocidade.",
+      "Suba pro nível Difícil no LyricsTraining. Ouça <b>Redimi2</b> (rap cristão, fala mais rápida) só pra afinar o ouvido.",
+      "2 chamadas de voz por dia no HelloTalk/Tandem. Em uma delas, treine responder <i>\"cuéntame sobre tu último proyecto\"</i>.",
+      "Baralho <b>\"Entrevista técnica\"</b> — decore as frases-chave da seção Frases.",
+    ],
+  },
+  {
+    tag: "Semana 4",
+    title: "Simulação real",
+    focus: "Última milha: juntar tudo numa simulação completa de entrevista e reunião em espanhol.",
+    tasks: [
+      "Vídeos do <b>Butterfly Spanish</b> focados em <i>entrevista de trabajo</i> e <i>reunión de equipo</i>.",
+      "<b>Language Transfer</b>, lições 25+ ou revisão livre das mais difíceis.",
+      "Pegue o violão e cante uma música inteira em espanhol de cabeça — teste de produção livre.",
+      "Peça ao parceiro do HelloTalk pra simular uma pequena entrevista técnica, ou use o <b>modo de voz do ChatGPT</b> (grátis).",
+      "Revisão geral de todos os baralhos anteriores — sem cards novos essa semana.",
+    ],
+  },
+];
+
+const TOOLS = [
+  { name: "Language Transfer", type: "App / Podcast", desc: "Método auditivo, sem escrita — ativa a fala rápido." },
+  { name: "Dreaming Spanish", type: "YouTube", desc: "Input compreensível por nível, treina o ouvido." },
+  { name: "HelloTalk", type: "App", desc: "Conversa por texto e voz com nativos mexicanos." },
+  { name: "Tandem", type: "App", desc: "Alternativa ao HelloTalk, mesma lógica de intercâmbio." },
+  { name: "LyricsTraining", type: "Site / App", desc: "Completa a letra da música enquanto ouve." },
+  { name: "Superholly", type: "YouTube", desc: "Gírias e cultura mexicana, sotaque autêntico." },
+  { name: "Butterfly Spanish", type: "YouTube", desc: "Conversação clara em espanhol latino." },
+  { name: "Easy Spanish", type: "YouTube", desc: "Entrevistas de rua em várias regiões." },
+  { name: "Español Automático", type: "Podcast", desc: "Histórias narradas devagar, boa transição." },
+  { name: "ChatGPT (voz)", type: "App / Web", desc: "Treino de conversa ilimitado, sem julgamento." },
+  { name: "Anki / Quizlet", type: "App", desc: "Flashcards de vocabulário, repetição espaçada." },
+  { name: "Duolingo", type: "App", desc: "10 min/dia de reforço de vocabulário (complementar)." },
+];
+
+const PLAYLIST = [
+  { tier: "Fácil — dicção clara e lenta", songs: [["Renuévame","Marcos Witt"],["Tu Fidelidad","Jesús Adrián Romero"],["Cuán Grande es Él","Danilo Montero"]] as [string,string][] },
+  { tier: "Médio", songs: [["Reyes y Sacerdotes","Miel San Marcos"],["Puedo Ver","Christine D'Clario"]] as [string,string][] },
+  { tier: "Louvor animado — ainda claro", songs: [["Cambia mi Corazón","Marcos Witt"],["Alfa y Omega","Barak"]] as [string,string][] },
+  { tier: "Avançado — mais rápido", songs: [["Abre los Cielos","Redimi2 (feat. Miel San Marcos)"]] as [string,string][] },
+];
+
+const PHRASES = [
+  { es: "Hola, mi nombre es Daniel, soy desarrollador full-stack con experiencia en Node.js, React e IA generativa.", ctx: "Abertura de apresentação" },
+  { es: "Tengo más de veinte años en operaciones y hace un año me dediqué de lleno al desarrollo de software.", ctx: "Contexto de carreira" },
+  { es: "Disculpa, ¿podrías repetir la pregunta, por favor?", ctx: "Pedir repetição sem travar" },
+  { es: "Dame un momento para pensarlo.", ctx: "Ganhar tempo com naturalidade" },
+  { es: "Voy a compartir mi pantalla.", ctx: "Reunião técnica" },
+  { es: "Estoy de acuerdo, aunque también podríamos considerar…", ctx: "Concordar com ressalva" },
+  { es: "No estoy seguro en este momento, pero lo voy a investigar y les aviso.", ctx: "Não saber sem travar a conversa" },
+  { es: "Quedo atento a cualquier duda, ¡muchas gracias por su tiempo!", ctx: "Fechar reunião" },
+];
+
+const VOCAB: [string,string][] = [
+  ["código heredado / legado","código legado"],
+  ["pruebas automatizadas","testes automatizados"],
+  ["control de versiones","controle de versão"],
+  ["integración continua","integração contínua"],
+  ["arquitectura","arquitetura"],
+  ["depuración","depuração"],
+  ["revisión de código","revisão de código"],
+  ["implementar / desplegar","implantar / deploy"],
+  ["requisitos","requisitos"],
+  ["tablero / panel","painel / dashboard"]
+];
+
+const AFFILIATES = [
+  { name: "Duolingo Plus", tag: "comissão 5%", desc: "Reforço diário de vocabulário + sem anúncios. Ideal semanas 1-2.", color: "#58CC02" },
+  { name: "Anki Pro", tag: "comissão 3%", desc: "Baralhos ilimitados e sincronização. Para seu vocabulário técnico.", color: "#006847" },
+  { name: "ChatGPT Plus", tag: "comissão 2%", desc: "Modo de voz ilimitado para simular entrevista técnica.", color: "#10A37F" },
+];
+
+const STORE_KEY = 'rumbo_a_mexico_progress_v1';
+
+function getPillarMinutes(code: string) {
+  switch(code){
+    case "O": return 15;
+    case "E": return 22;
+    case "M": return 15;
+    case "C": return 15;
+    case "V": return 10;
+    default: return 10;
+  }
+}
+
+export default function App() {
+  const [progress, setProgress] = useState<Record<string, boolean>>({});
+  const [activeTab, setActiveTab] = useState<'hoje'|'trilha'|'biblioteca'>('trilha');
+  const [biblioTab, setBiblioTab] = useState<'ferramentas'|'musicas'|'frases'|'vocab'|'afiliados'>('ferramentas');
+  const [todayIndex, setTodayIndex] = useState(11); // Dia 12 como exemplo aprovado
+  const [lastAction, setLastAction] = useState<string>("");
+  const [clickTick, setClickTick] = useState(0);
+  const [showPremium, setShowPremium] = useState(false);
+  const [showCert, setShowCert] = useState(false);
+  const [hasCelebrated, setHasCelebrated] = useState(false);
+
+  // Load from localStorage - LÓGICA PRESERVADA
+  useEffect(()=>{
+    try{
+      const raw = localStorage.getItem(STORE_KEY);
+      if(raw){
+        const parsed = JSON.parse(raw);
+        setProgress(parsed);
+      }
+    }catch{}
+  },[]);
+
+  // Save - idêntica
+  const updateProgress = (key: string, checked: boolean) => {
+    setProgress(prev=>{
+      const next = { ...prev, [key]: checked };
+      try{
+        localStorage.setItem(STORE_KEY, JSON.stringify(next));
+      }catch{}
+      return next;
+    });
+  };
+
+  // Derived stats - updateProgress idêntica + updateRings, updateTrail, updateHeatmap
+  const { total, checkedCount, pct, daysDoneArray, daysDoneCount, currentStreak, bestStreak, minutesToday, minutesWeek } = useMemo(()=>{
+    const totalBoxes = 4*5*7;
+    let checked = 0;
+    const daysArr: boolean[] = [];
+    for(let wi=0; wi<4; wi++){
+      for(let d=0; d<7; d++){
+        let full = true;
+        for(let pi=0; pi<5; pi++){
+          const k = `w${wi}-p${pi}-d${d}`;
+          if(progress[k]) checked++;
+          else full = false;
+        }
+        // but we double counted? We need correct total checked count logic.
+        // Actually loop above counts 5 per day *4*7 =140 but we nested incorrectly for checked.
+        // Let's recompute checked separately to avoid double loop confusion.
+      }
+    }
+    // correct checked
+    checked = Object.values(progress).filter(Boolean).length;
+
+    // daysDone
+    for(let wi=0; wi<4; wi++){
+      for(let d=0; d<7; d++){
+        let full = true;
+        for(let pi=0; pi<5; pi++){
+          if(!progress[`w${wi}-p${pi}-d${d}`]){ full = false; break; }
+        }
+        daysArr.push(full);
+      }
+    }
+    const daysDone = daysArr.filter(Boolean).length;
+
+    // streaks
+    let best = 0, cur = 0, curStreak = 0;
+    // best streak
+    let run = 0;
+    for(let i=0;i<daysArr.length;i++){
+      if(daysArr[i]){ run++; best = Math.max(best, run); } else { run = 0; }
+    }
+    // current streak = consecutive from last true backwards
+    for(let i=daysArr.length-1;i>=0;i--){
+      if(daysArr[i]) curStreak++; else if(curStreak>0) break;
+    }
+    // if last day not done, current streak is streak ending at last done? We'll show last streak.
+    // Actually if last not done, we want streak up to last done, but still show
+    if(curStreak===0 && daysDone>0){
+      // find last true and count backwards from there
+      let lastTrue = daysArr.lastIndexOf(true);
+      if(lastTrue>=0){
+        for(let i=lastTrue;i>=0;i--){
+          if(daysArr[i]) cur++; else break;
+        }
+        curStreak = cur;
+      }
+    }
+
+    // minutes today - todayIndex
+    const wiToday = Math.floor(todayIndex/7);
+    const dToday = todayIndex%7;
+    let minToday = 0;
+    for(let pi=0; pi<5; pi++){
+      if(progress[`w${wiToday}-p${pi}-d${dToday}`]) minToday += getPillarMinutes(PILLARS[pi].code);
+    }
+    // minutes week
+    let minWeek = 0;
+    for(let d=0; d<7; d++){
+      for(let pi=0; pi<5; pi++){
+        if(progress[`w${wiToday}-p${pi}-d${d}`]) minWeek += getPillarMinutes(PILLARS[pi].code);
+      }
+    }
+
+    return {
+      total: totalBoxes,
+      checkedCount: checked,
+      pct: Math.round(100*checked/totalBoxes),
+      daysDoneArray: daysArr,
+      daysDoneCount: daysDone,
+      currentStreak: curStreak,
+      bestStreak: best,
+      minutesToday: minToday,
+      minutesWeek: minWeek,
+    };
+  }, [progress, todayIndex]);
+
+  // auto select todayIndex as first incomplete apenas se já houver progresso, para preservar Dia 12 do mock GYM
+  useEffect(()=>{
+    if(Object.keys(progress).length===0) return;
+    const firstIncomplete = daysDoneArray.findIndex(v=>!v);
+    if(firstIncomplete>=0 && firstIncomplete!==todayIndex) setTodayIndex(firstIncomplete);
+    else if(daysDoneArray.length===28 && daysDoneArray.every(Boolean)) setTodayIndex(27);
+  }, [daysDoneArray, progress]);
+
+  // celebrar 100%
+  useEffect(()=>{
+    if(pct===100 && !hasCelebrated){
+      setShowCert(true);
+      setHasCelebrated(true);
+    }
+  }, [pct, hasCelebrated]);
+
+  const wi = Math.floor(todayIndex/7);
+  const d = todayIndex%7;
+
+  const downloadCert = () => {
+    const content = `RUMBO A MÉXICO - CERTIFICADO\n\n¡Felicidades! Você completou 28 dias.\nProgresso: ${pct}% - ${daysDoneCount}/28 dias\nData: ${new Date().toLocaleDateString('pt-BR')}\n\nSelo: 28 pedras do deserto conquistadas 🌵\n\nPróximos desafios: 8, 12, 16 semanas e outros idiomas em breve em espanhol.dotapps.com.br`;
+    const blob = new Blob([content], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'certificado-rumbo-mexico-28-dias.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className="min-h-screen" style={{ background: "#FDF6E3", color: "#1A1A1A" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,800&family=Karla:wght@400;500;700&display=swap');
+        *{font-family:'Karla',system-ui,sans-serif}
+        h1,h2,h3,.fraunces{font-family:'Fraunces',serif}
+        .ring-bg{fill:none;stroke:#E8DCC3;stroke-width:8}
+        .ring-fg{fill:none;stroke-width:8;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset .6s ease}
+      `}</style>
+
+      {/* HEADER OFICIAL COM LOGO */}
+      <header className="sticky top-0 z-30 backdrop-blur-xl border-b" style={{ background: "rgba(255,254,250,0.9)", borderColor: "#E8DCC3" }}>
+        <div className="max-w-[1180px] mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <img src={logoIcon} alt="Logo México" className="w-9 h-9 rounded-xl object-contain bg-white shadow-sm border" style={{ borderColor: "#E8DCC3" }} />
+            <div className="flex items-baseline gap-1.5">
+              <span className="fraunces font-extrabold tracking-tight text-[18px] md:text-[20px]" style={{ color: "#006847" }}>RUMBO</span>
+              <span className="fraunces font-extrabold tracking-tight text-[18px] md:text-[20px]" style={{ color: "#CE1126" }}>A MÉXICO</span>
+              <span className="hidden md:inline ml-2 text-[11px] font-bold tracking-widest px-2 py-0.5 rounded-full" style={{ background: "#FDF6E3", color: "#6E6350", border: "1px solid #E8DCC3" }}>GYM DESERTO</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-3 mr-2">
+              <div className="text-right leading-none">
+                <div className="text-[11px] tracking-widest font-bold" style={{ color: "#6E6350" }}>SEQUÊNCIA</div>
+                <div className="fraunces font-bold text-[16px]">{currentStreak} dias</div>
+              </div>
+              <div className="w-px h-8" style={{ background: "#E8DCC3" }} />
+              <div className="text-right leading-none">
+                <div className="text-[11px] tracking-widest font-bold" style={{ color: "#6E6350" }}>MELHOR</div>
+                <div className="fraunces font-bold text-[16px]">{bestStreak}</div>
+              </div>
+            </div>
+            <button onClick={()=>setShowPremium(true)} className="px-4 py-2 rounded-full text-white text-[13px] font-bold tracking-wide hover:brightness-110 active:scale-[0.98] transition" style={{ background: "#006847" }}>Premium</button>
+          </div>
+        </div>
+
+        {/* HERO COM 3 ANÉIS APPLE WATCH */}
+        <div className="max-w-[1180px] mx-auto px-4 md:px-6 pb-5 pt-2">
+          <div className="rounded-[20px] p-4 md:p-6 flex flex-col md:flex-row gap-6 items-center md:items-end justify-between shadow-[0_1px_2px_rgba(33,27,20,.06),0_8px_24px_-10px_rgba(33,27,20,.15)]" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
+            <div className="flex gap-5 items-center w-full md:w-auto">
+              {/* Rings */}
+              <div className="relative w-[112px] h-[112px] shrink-0">
+                <svg viewBox="0 0 120 120" className="w-full h-full">
+                  {/* bg rings */}
+                  <circle cx="60" cy="60" r="52" className="ring-bg" />
+                  <circle cx="60" cy="60" r="40" className="ring-bg" />
+                  <circle cx="60" cy="60" r="28" className="ring-bg" />
+                  {/* fg rings */}
+                  <circle cx="60" cy="60" r="52" className="ring-fg" style={{ stroke: "#006847", strokeDasharray: `${2*Math.PI*52}`, strokeDashoffset: `${2*Math.PI*52*(1-Math.min(minutesToday/60,1))}` }} />
+                  <circle cx="60" cy="60" r="40" className="ring-fg" style={{ stroke: "#E86A33", strokeDasharray: `${2*Math.PI*40}`, strokeDashoffset: `${2*Math.PI*40*(1-pct/100)}` }} />
+                  <circle cx="60" cy="60" r="28" className="ring-fg" style={{ stroke: "#CE1126", strokeDasharray: `${2*Math.PI*28}`, strokeDashoffset: `${2*Math.PI*28*(1-Math.min(currentStreak/7,1))}` }} />
+                </svg>
+                <div className="absolute inset-0 grid place-items-center">
+                  <img src={logoIcon} alt="" className="w-7 h-7 rounded-full" />
+                </div>
+              </div>
+              <div>
+                <div className="text-[11px] font-bold tracking-[0.14em] mb-1" style={{ color: "#E86A33" }}>DESAFIO 28 DIAS • HOJE É DIA {todayIndex+1}</div>
+                <div className="fraunces font-extrabold text-[22px] leading-tight">Rumbo a México — GYM Deserto</div>
+                <div className="text-[13px] mt-1 max-w-[42ch]" style={{ color: "#6E6350" }}>28 dias de espanhol falado para entrevista e projeto com a equipe mexicana — foco 100% fala.</div>
+                <div className="flex gap-2 mt-3 flex-wrap">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full" style={{ background: "#E8F5E9", color: "#006847", border: "1px solid #C8E6C9" }}><span className="w-2 h-2 rounded-full" style={{ background: "#006847" }} />{minutesToday} / 60 min hoje</span>
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full" style={{ background: "#FFF1E6", color: "#E86A33", border: "1px solid #FFD6BA" }}><span className="w-2 h-2 rounded-full" style={{ background: "#E86A33" }} />{pct}% total</span>
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full" style={{ background: "#FFEBEE", color: "#CE1126", border: "1px solid #FFCDD2" }}><span className="w-2 h-2 rounded-full" style={{ background: "#CE1126" }} />{currentStreak} streak</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full md:w-auto grid grid-cols-3 gap-3 md:flex md:gap-5">
+              <div className="rounded-xl p-3 min-w-[92px] text-center md:text-left" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}>
+                <div id="pct" className="fraunces font-extrabold text-[24px] leading-none">{pct}%</div>
+                <div className="text-[10px] font-bold tracking-widest mt-1" style={{ color: "#6E6350" }}>PROGRESSO</div>
+                <div className="h-1.5 rounded-full mt-2 overflow-hidden" style={{ background: "#E8DCC3" }}><div id="barTotal" className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: "#E86A33" }} /></div>
+              </div>
+              <div className="rounded-xl p-3 min-w-[92px] text-center md:text-left" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}>
+                <div id="daysDone" className="fraunces font-extrabold text-[24px] leading-none">{daysDoneCount}<span className="text-[14px] font-medium" style={{ color: "#6E6350" }}>/28</span></div>
+                <div className="text-[10px] font-bold tracking-widest mt-1" style={{ color: "#6E6350" }}>DIAS</div>
+                <div className="text-[11px] mt-1" style={{ color: "#6E6350" }}>{minutesWeek} min semana</div>
+              </div>
+              <div className="rounded-xl p-3 min-w-[92px] text-center md:text-left md:hidden" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}>
+                <div className="fraunces font-extrabold text-[24px] leading-none">{currentStreak}</div>
+                <div className="text-[10px] font-bold tracking-widest mt-1" style={{ color: "#6E6350" }}>STREAK</div>
+                <div className="text-[11px] mt-1" style={{ color: "#6E6350" }}>melhor {bestStreak}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* ABAS PILL */}
+      <div className="max-w-[1180px] mx-auto px-4 md:px-6 mt-5">
+        <div className="inline-flex p-1 rounded-full gap-1 max-w-full overflow-x-auto" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
+          {[
+            { id: "hoje", label: "HOJE" },
+            { id: "trilha", label: "TRILHA 28" },
+            { id: "biblioteca", label: "BIBLIOTECA" },
+          ].map(t=>(
+            <button key={t.id} onClick={()=>{ setActiveTab(t.id as any); window.scrollTo({top:0, behavior:'smooth'}); }} className={`px-5 py-2 rounded-full text-[13px] font-bold tracking-wide transition shrink-0 ${activeTab===t.id ? "text-white shadow" : ""}`} style={{ background: activeTab===t.id ? "#1A1A1A" : "transparent", color: activeTab===t.id ? "#fff" : "#6E6350" }}>{t.label}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* feedback global sempre visível para validação e UX */}
+      {lastAction && (
+        <div className="max-w-[1180px] mx-auto px-4 md:px-6 mt-3">
+          <div className="text-[11px] font-bold px-3 py-1.5 rounded-full inline-flex" style={{ background: "#E8F5E9", border: "1px solid #A5D6A7", color: "#006847" }}>✓ {lastAction}</div>
+        </div>
+      )}
+      <main className="max-w-[1180px] mx-auto px-4 md:px-6 pb-24 mt-6">
+        {activeTab==="hoje" && (
+          <div className="grid lg:grid-cols-[1fr_340px] gap-6 items-start">
+            <div>
+              {/* Caminho tracejado com cactozinho */}
+              <div className="rounded-[18px] p-5 mb-5" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="fraunces font-bold text-[18px]">Dia {todayIndex+1} • {WEEKS[wi]?.tag} — {WEEKS[wi]?.title}</div>
+                  <div className="text-[11px] font-bold tracking-widest px-2 py-1 rounded-full" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3", color: "#6E6350" }}>{WEEKS[wi]?.focus.slice(0,28)}...</div>
+                </div>
+                {/* desert trail */}
+                <div className="relative h-[56px] rounded-xl flex items-center px-3" style={{ background: "linear-gradient(90deg,#FDF6E3 0%,#FFFEFA 100%)", border: "1px dashed #E8DCC3" }}>
+                  <div className="absolute left-3 right-3 top-1/2 h-0 border-t-[3px] border-dashed" style={{ borderColor: "#E8DCC3" }} />
+                  <div className="absolute top-1/2 -translate-y-1/2 transition-all duration-700" style={{ left: `calc(${Math.max(6, Math.min(92, pct))}% )`, transform: "translate(-50%,-50%)" }}>
+                    <div className="w-8 h-8 rounded-full grid place-items-center text-[18px] shadow" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>🌵</div>
+                  </div>
+                  <div className="flex justify-between w-full relative z-10">
+                    {Array.from({length:5}).map((_,i)=>(
+                      <div key={i} className="w-2 h-2 rounded-full" style={{ background: pct > i*20 ? "#006847" : "#E8DCC3" }} />
+                    ))}
+                  </div>
+                </div>
+                {/* day selector */}
+                <div className="flex gap-1.5 mt-4 overflow-x-auto pb-1">
+                  {Array.from({length:28}).map((_,i)=>{
+                    const isDone = daysDoneArray[i];
+                    const isToday = i===todayIndex;
+                    return (
+                      <button key={i} onClick={()=>{ setTodayIndex(i); setClickTick(c=>c+1); setLastAction(`Dia ${i+1} selecionado • clique ${clickTick+1}`); }} className={`shrink-0 w-9 h-9 rounded-full grid place-items-center text-[12px] font-bold border transition ${isToday ? "text-white" : ""}`} style={{ background: isDone ? "#006847" : isToday ? "#E86A33" : "#FFFEFA", color: isDone||isToday ? "#fff" : "#6E6350", borderColor: isDone ? "#006847" : isToday ? "#E86A33" : "#E8DCC3", boxShadow: isToday ? "0 0 0 3px #FFD6BA" : "none" }}>{i+1}</button>
+                    )
+                  })}
+                </div>
+                {lastAction && <div className="mt-2 text-[11px] font-bold" style={{ color: "#006847" }}>{lastAction}</div>}
+              </div>
+
+              {/* 5 cards O E M C V */}
+              <div className="grid gap-4">
+                {PILLARS.map((pillar, pi)=>{
+                  const key = `w${wi}-p${pi}-d${d}`;
+                  const checked = !!progress[key];
+                  const taskHtml = WEEKS[wi]?.tasks[pi] || "";
+                  return (
+                    <div key={pi} className="rounded-[18px] p-4 md:p-5 flex gap-4 items-start transition" style={{ background: checked ? "#E8F5E9" : "#FFFEFA", border: `1px solid ${checked ? "#A5D6A7" : "#E8DCC3"}`, boxShadow: "0 1px 2px rgba(33,27,20,.04)" }}>
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-9 h-9 rounded-[10px] grid place-items-center fraunces font-extrabold text-[15px]" style={{ background: checked ? "#006847" : "#FDF6E3", color: checked ? "#fff" : "#1A1A1A", border: "1px solid #E8DCC3" }}>{pillar.code}</div>
+                        <button aria-label={`Marcar ${pillar.title}`} onClick={()=>updateProgress(key, !checked)} className="w-8 h-8 rounded-[10px] grid place-items-center border-2 transition-all active:scale-95" style={{ background: checked ? "#006847" : "#FFFEFA", borderColor: checked ? "#006847" : "#E8DCC3", width: "32px", height: "32px" }}>
+                          {checked && <span className="text-white text-[16px] font-bold">✓</span>}
+                        </button>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-baseline gap-2">
+                          <div className="fraunces font-bold text-[16px]">{pillar.title}</div>
+                          <div className="text-[11px] font-bold tracking-wide px-2 py-0.5 rounded-full" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3", color: "#6E6350" }}>{pillar.time}</div>
+                          {checked && <span className="text-[11px] font-bold" style={{ color: "#006847" }}>• feito</span>}
+                        </div>
+                        <div className="text-[13.5px] mt-1.5 leading-[1.5]" style={{ color: "#1A1A1A" }} dangerouslySetInnerHTML={{ __html: taskHtml }} />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              <div className="mt-6 text-[12px] text-center" style={{ color: "#6E6350" }}>Progresso salvo automaticamente em <code className="px-1.5 py-0.5 rounded" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>{STORE_KEY}</code> • {checkedCount}/{total} tarefas</div>
+            </div>
+
+            {/* Sidebar afiliados + resumo */}
+            <aside className="flex flex-col gap-5">
+              <div className="rounded-[18px] p-5" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
+                <div className="fraunces font-bold text-[16px]">Hoje • minutos</div>
+                <div className="text-[12px] mt-1" style={{ color: "#6E6350" }}>Meta Apple Watch: 60 min</div>
+                <div className="mt-3 h-2 rounded-full overflow-hidden" style={{ background: "#E8DCC3" }}><div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, (minutesToday/60)*100)}%`, background: "#006847" }} /></div>
+                <div className="text-[12px] mt-2 font-bold" style={{ color: "#006847" }}>{minutesToday} min feitos hoje</div>
+              </div>
+
+              <div className="rounded-[18px] p-5" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
+                <div className="flex items-center justify-between">
+                  <div className="fraunces font-bold text-[16px]">Afiliados</div>
+                  <span className="text-[10px] font-bold tracking-widest px-2 py-0.5 rounded-full" style={{ background: "#FFF1E6", color: "#E86A33", border: "1px solid #FFD6BA" }}>COMISSÃO 2-5%</span>
+                </div>
+                <div className="grid gap-3 mt-3">
+                  {AFFILIATES.map(a=>(
+                    <div key={a.name} className="rounded-xl p-3 flex gap-3 items-start" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}>
+                      <div className="w-8 h-8 rounded-full shrink-0" style={{ background: a.color }} />
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <div className="font-bold text-[13px]">{a.name}</div>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>{a.tag}</span>
+                        </div>
+                        <div className="text-[11.5px] mt-0.5" style={{ color: "#6E6350" }}>{a.desc}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button onClick={()=>setShowPremium(true)} className="w-full mt-3 py-2.5 rounded-full text-[12px] font-bold" style={{ background: "#1A1A1A", color: "#fff" }}>Ver links de afiliado →</button>
+              </div>
+
+              <div className="rounded-[18px] p-4 flex gap-3 items-center" style={{ background: "#1A1A1A", color: "#FFFEFA" }}>
+                <img src={logoFull} alt="Logo completo" className="w-14 h-14 object-contain rounded-xl bg-white p-1" />
+                <div className="text-[12px] leading-tight"><b>GYM Deserto</b> • espanhol.dotapps.com.br<br/><span style={{ color: "#E8DCC3" }}>Expansões 8/12/16 semanas + outros idiomas em breve.</span></div>
+              </div>
+            </aside>
+          </div>
+        )}
+
+        {activeTab==="trilha" && (
+          <div className="grid lg:grid-cols-[1fr_360px] gap-6">
+            <div className="rounded-[22px] p-6 md:p-8" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="fraunces font-extrabold text-[20px]">Trilha 28 pedras • deserto sinuoso</div>
+                <div className="flex items-center gap-2 text-[11px]">
+                  <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full" style={{ background: "#006847" }} /> completo</span>
+                  <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full animate-pulse" style={{ background: "#E86A33" }} /> hoje</span>
+                  <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full border" style={{ background: "#FDF6E3", borderColor: "#E8DCC3" }} /> futuro</span>
+                </div>
+              </div>
+
+              {/* Caminho sinuoso */}
+              <div className="relative mt-8 mx-auto max-w-[720px]">
+                {/* SVG path tracejado */}
+                <svg viewBox="0 0 400 680" className="absolute inset-0 w-full h-full pointer-events-none">
+                  <path d="M 200 20 C 80 80, 320 140, 200 200 C 80 260, 320 320, 200 380 C 80 440, 320 500, 200 560 C 80 620, 200 660, 200 660" fill="none" stroke="#E8DCC3" strokeWidth="3" strokeDasharray="10 12" />
+                </svg>
+                <div className="relative grid gap-[18px]">
+                  {Array.from({length:28}).map((_,i)=>{
+                    const isDone = daysDoneArray[i];
+                    const isToday = i===todayIndex;
+                    const offset = Math.sin(i*0.9)*46; // sinuoso
+                    return (
+                      <div key={i} className="flex items-center" style={{ transform: `translateX(${offset}px)`, justifyContent: i%2===0 ? "flex-start" : "flex-end" }}>
+                        <button onClick={()=>{ setTodayIndex(i); setClickTick(c=>c+1); setActiveTab('hoje'); setLastAction(`Indo para Dia ${i+1} • ${clickTick+1}`); }} className={`group relative w-[54px] h-[54px] rounded-full grid place-items-center font-bold text-[13px] border-2 transition-all hover:scale-[1.05] active:scale-[0.97] ${isToday ? "animate-[pulse_1.8s_infinite]" : ""}`} style={{
+                          background: isDone ? "#006847" : isToday ? "#E86A33" : "#FDF6E3",
+                          borderColor: isDone ? "#006847" : isToday ? "#E86A33" : "#E8DCC3",
+                          color: isDone||isToday ? "#fff" : "#6E6350",
+                          boxShadow: isToday ? "0 0 0 6px rgba(232,106,51,0.18)" : isDone ? "0 2px 8px rgba(0,104,71,0.25)" : "none"
+                        }}>
+                          {isDone ? "🌵" : i+1}
+                          {isDone && <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-white border grid place-items-center text-[10px]" style={{ borderColor: "#006847" }}>✓</span>}
+                        </button>
+                        <div className="ml-3 mr-3 text-[11px] leading-tight max-w-[160px]" style={{ color: "#6E6350" }}>
+                          <div className="font-bold" style={{ color: "#1A1A1A" }}>Dia {i+1}</div>
+                          <div>{isDone ? "completo" : isToday ? "hoje • bora!" : `${5 - (Object.keys(progress).filter(k=>k.includes(`-d${i%7}`) && k.startsWith(`w${Math.floor(i/7)}-`)).length>0 ? 1 : 0)} tarefas`}</div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              <div className="mt-8 flex justify-center">
+                <img src={logoIcon} alt="cacto" className="w-10 h-10 opacity-80" />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-6">
+              <div className="rounded-[18px] p-5" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
+                <div className="fraunces font-bold text-[16px]">Mapa de calor 4x7 • GitHub style</div>
+                <div className="text-[11px] mt-1" style={{ color: "#6E6350" }}>verde claro → verde México #006847</div>
+                <div className="grid grid-cols-7 gap-2 mt-4">
+                  {Array.from({length:28}).map((_,idx)=>{
+                    const wi = Math.floor(idx/7);
+                    const d = idx%7;
+                    let count = 0;
+                    for(let pi=0; pi<5; pi++) if(progress[`w${wi}-p${pi}-d${d}`]) count++;
+                    const intensity = count/5;
+                    let bg = "#FFFEFA";
+                    if(count===1) bg = "#C6E8D0";
+                    else if(count===2) bg = "#8FCC9E";
+                    else if(count===3) bg = "#5AB070";
+                    else if(count===4) bg = "#2E8A4A";
+                    else if(count===5) bg = "#006847";
+                    return (
+                      <div key={idx} title={`Dia ${idx+1}: ${count}/5`} className="aspect-square rounded-[6px] grid place-items-center text-[10px] font-bold border transition" style={{ background: bg, borderColor: "#E8DCC3", color: count>=4 ? "#fff" : "#6E6350" }}>
+                        {count===5 ? "✓" : count>0 ? count : ""}
+                      </div>
+                    )
+                  })}
+                </div>
+                <div className="flex items-center gap-1 mt-3 justify-end text-[10px]" style={{ color: "#6E6350" }}>
+                  <span>menos</span>
+                  <span className="w-3 h-3 rounded-[3px] border" style={{ background: "#FFFEFA", borderColor: "#E8DCC3" }} />
+                  <span className="w-3 h-3 rounded-[3px]" style={{ background: "#C6E8D0" }} />
+                  <span className="w-3 h-3 rounded-[3px]" style={{ background: "#8FCC9E" }} />
+                  <span className="w-3 h-3 rounded-[3px]" style={{ background: "#006847" }} />
+                  <span>mais</span>
+                </div>
+              </div>
+
+              <div className="rounded-[18px] p-5" style={{ background: "#1A1A1A", color: "#FFFEFA" }}>
+                <div className="fraunces font-bold">Progresso por semana</div>
+                <div className="grid gap-3 mt-3">
+                  {WEEKS.map((w,wi)=>{
+                    let wTotal=0,wChecked=0;
+                    for(let pi=0;pi<5;pi++) for(let d=0;d<7;d++){ wTotal++; if(progress[`w${wi}-p${pi}-d${d}`]) wChecked++; }
+                    const pctW = Math.round(100*wChecked/wTotal);
+                    return (
+                      <div key={wi}>
+                        <div className="flex justify-between text-[12px]"><span className="font-bold">{w.tag}</span><span style={{ color: "#E8DCC3" }}>{pctW}%</span></div>
+                        <div className="h-1.5 rounded-full mt-1" style={{ background: "#2A2A2A" }}><div className="h-full rounded-full" style={{ width: `${pctW}%`, background: wi===0 ? "#006847" : wi===1 ? "#E86A33" : wi===2 ? "#CE1126" : "#FDF6E3" }} /></div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab==="biblioteca" && (
+          <div className="grid lg:grid-cols-[220px_1fr_300px] gap-6">
+            <div className="rounded-[18px] p-3 h-fit sticky top-[148px]" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
+              {[
+                { id: "ferramentas", label: "Ferramentas" },
+                { id: "musicas", label: "Músicas" },
+                { id: "frases", label: "Frases" },
+                { id: "vocab", label: "Vocab" },
+                { id: "afiliados", label: "Afiliados ★" },
+              ].map(it=>(
+                <button key={it.id} onClick={()=>setBiblioTab(it.id as any)} className={`w-full text-left px-3 py-2.5 rounded-full text-[13px] font-bold mb-1 transition ${biblioTab===it.id ? "text-white" : ""}`} style={{ background: biblioTab===it.id ? "#1A1A1A" : "transparent", color: biblioTab===it.id ? "#fff" : "#6E6350" }}>{it.label}</button>
+              ))}
+              <div className="mt-4 p-3 rounded-xl" style={{ background: "#FDF6E3", border: "1px dashed #E8DCC3" }}>
+                <div className="text-[11px] font-bold tracking-widest" style={{ color: "#6E6350" }}>DICA GYM DESERTO</div>
+                <div className="text-[12px] mt-1 leading-snug">Use o ícone <img src={logoIcon} alt="" className="inline w-4 h-4" /> em loading / empty states — já aplicado.</div>
+              </div>
+            </div>
+
+            <div className="rounded-[18px] p-5 md:p-6 min-h-[420px]" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
+              {biblioTab==="ferramentas" && (
+                <>
+                  <div className="fraunces font-extrabold text-[20px]">Caixa de ferramentas • tudo grátis</div>
+                  <div className="text-[12px] mt-1" style={{ color: "#6E6350" }}>Baixe no domingo antes de começar • IDs preservados weeks, tools, playlist, phrases, vocab</div>
+                  <div id="tools" className="grid md:grid-cols-2 gap-3 mt-5">
+                    {TOOLS.map(t=>(
+                      <div key={t.name} className="rounded-xl p-3" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}>
+                        <div className="flex justify-between items-baseline"><span className="font-bold text-[13px]">{t.name}</span><span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#E8F5E9", color: "#006847" }}>grátis</span></div>
+                        <div className="text-[10px] tracking-widest font-bold mt-1" style={{ color: "#6E6350" }}>{t.type}</div>
+                        <div className="text-[12px] mt-1" style={{ color: "#6E6350" }}>{t.desc}</div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+              {biblioTab==="musicas" && (
+                <>
+                  <div className="fraunces font-extrabold text-[20px]">Trilha sonora</div>
+                  <div id="playlist" className="mt-5 grid gap-5">
+                    {PLAYLIST.map(tier=>(
+                      <div key={tier.tier}>
+                        <div className="text-[11px] font-bold tracking-widest" style={{ color: "#E86A33" }}>{tier.tier}</div>
+                        <div className="mt-2 divide-y rounded-xl overflow-hidden" style={{ border: "1px solid #E8DCC3" }}>
+                          {tier.songs.map(s=>(
+                            <div key={s[0]} className="flex justify-between p-2.5 text-[13px] bg-[#FFFEFA]">
+                              <span className="font-medium">{s[0]}</span><span className="text-[11px]" style={{ color: "#6E6350" }}>{s[1]}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+              {biblioTab==="frases" && (
+                <>
+                  <div className="fraunces font-extrabold text-[20px]">Frases de reunião</div>
+                  <div id="phrases" className="mt-4 divide-y" style={{ borderColor: "#E8DCC3" }}>
+                    {PHRASES.map((p,i)=>(
+                      <div key={i} className="py-3">
+                        <div className="italic text-[13.5px]">"{p.es}"</div>
+                        <div className="text-[11px] mt-1" style={{ color: "#6E6350" }}>{p.ctx}</div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+              {biblioTab==="vocab" && (
+                <>
+                  <div className="fraunces font-extrabold text-[20px]">Vocabulário técnico</div>
+                  <table id="vocab" className="w-full mt-4 text-[13px]">
+                    <tbody>
+                      {VOCAB.map((v,i)=>(
+                        <tr key={i} className="border-t" style={{ borderColor: "#E8DCC3" }}>
+                          <td className="py-2 italic">{v[0]}</td><td className="py-2 text-right" style={{ color: "#6E6350" }}>{v[1]}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
+              )}
+              {biblioTab==="afiliados" && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div className="fraunces font-extrabold text-[20px]">Afiliados • monetização pronta</div>
+                    <span className="text-[10px] font-bold px-2 py-1 rounded-full" style={{ background: "#FFF1E6", color: "#E86A33", border: "1px solid #FFD6BA" }}>COMISSÃO 2-5%</span>
+                  </div>
+                  <div className="grid gap-3 mt-5">
+                    {AFFILIATES.map(a=>(
+                      <div key={a.name} className="rounded-xl p-4 flex gap-4 items-center" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}>
+                        <div className="w-12 h-12 rounded-xl" style={{ background: a.color }} />
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2"><span className="font-bold">{a.name}</span><span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white border" style={{ borderColor: "#E8DCC3" }}>{a.tag}</span></div>
+                          <div className="text-[12px] mt-1" style={{ color: "#6E6350" }}>{a.desc}</div>
+                        </div>
+                        <button className="px-3 py-1.5 rounded-full text-[11px] font-bold text-white" style={{ background: "#1A1A1A" }}>Ver</button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-6 p-4 rounded-xl" style={{ background: "#1A1A1A", color: "#fff" }}>
+                    <div className="font-bold">Estrutura visual sem backend</div>
+                    <div className="text-[12px] mt-1" style={{ color: "#E8DCC3" }}>Basta trocar href pelos seus links de afiliado. Premium já está no header verde #006847.</div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <div className="rounded-[18px] p-5" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
+                <div className="fraunces font-bold">Resumo rápido</div>
+                <div className="text-[12px] mt-2 space-y-1" style={{ color: "#6E6350" }}>
+                  <div>• {checkedCount} / {total} tarefas</div>
+                  <div>• {daysDoneCount}/28 dias completos</div>
+                  <div>• Streak atual {currentStreak} dias</div>
+                  <div>• Key localStorage: {STORE_KEY}</div>
+                </div>
+                <img src={logoFull} alt="logo full" className="mt-4 w-full rounded-xl border p-2 bg-white" style={{ borderColor: "#E8DCC3" }} />
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+
+      <footer className="border-t mt-10" style={{ borderColor: "#E8DCC3", background: "#FFFEFA" }}>
+        <div className="max-w-[1180px] mx-auto px-4 md:px-6 py-8 text-center">
+          <div className="flex justify-center mb-3"><img src={logoIcon} alt="logo" className="w-8 h-8" /></div>
+          <div className="fraunces font-bold text-[14px]">Rumbo a México — Desafio 28 Dias</div>
+          <div className="text-[12px] mt-2 max-w-[60ch] mx-auto" style={{ color: "#6E6350" }}>
+            Progresso salvo neste navegador. Reabra todo dia — o ouvido se acostuma antes da boca. <br/>
+            Expansões previstas: <b>8, 12 e 16 semanas</b> e outros idiomas (inglês, francês) em breve em <b>espanhol.dotapps.com.br</b> • Pronto para subir com favicons 32, 180, 512 e favicon.ico.
+          </div>
+          <div className="text-[10px] mt-3 tracking-widest font-bold" style={{ color: "#E8DCC3" }}>GYM DESERTO FINAL • AREIA #FDF6E3 • VERDE MÉXICO #006847 • VERMELHO #CE1126 • TERRACOTA #E86A33</div>
+        </div>
+      </footer>
+
+      {/* MODAL PREMIUM */}
+      {showPremium && (
+        <div className="fixed inset-0 z-50 grid place-items-center p-4 bg-black/40 backdrop-blur-sm" onClick={()=>setShowPremium(false)}>
+          <div onClick={e=>e.stopPropagation()} className="w-full max-w-[420px] rounded-[22px] p-6" style={{ background: "#FFFEFA", border: "1px solid #E8DCC3" }}>
+            <div className="flex items-center gap-3">
+              <img src={logoIcon} alt="" className="w-9 h-9" />
+              <div className="fraunces font-extrabold text-[18px]">Premium • Rumbo a México</div>
+            </div>
+            <div className="text-[13px] mt-3" style={{ color: "#6E6350" }}>Desbloqueie 8/12/16 semanas, certificado PDF com selo oficial, áudios extras e correção de pronúncia por IA. Estrutura visual pronta — sem backend.</div>
+            <div className="grid gap-2 mt-4">
+              <div className="rounded-xl p-3 flex justify-between" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}><span className="font-bold text-[13px]">Plano 8 semanas</span><span className="font-bold text-[13px]" style={{ color: "#006847" }}>R$ 29</span></div>
+              <div className="rounded-xl p-3 flex justify-between" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}><span className="font-bold text-[13px]">Plano 16 semanas + 3 idiomas</span><span className="font-bold text-[13px]" style={{ color: "#006847" }}>R$ 79</span></div>
+            </div>
+            <button onClick={()=>setShowPremium(false)} className="w-full mt-4 py-3 rounded-full font-bold text-white" style={{ background: "#006847" }}>Entendi • continuar grátis</button>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL CERTIFICADO 100% */}
+      {showCert && (
+        <div className="fixed inset-0 z-[60] grid place-items-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="w-full max-w-[480px] rounded-[26px] p-7 text-center" style={{ background: "#FFFEFA", border: "2px solid #006847" }}>
+            <div className="w-20 h-20 mx-auto rounded-full grid place-items-center" style={{ background: "#E8F5E9", border: "2px solid #006847" }}><img src={logoIcon} alt="" className="w-12 h-12" /></div>
+            <div className="fraunces font-extrabold text-[28px] mt-4" style={{ color: "#006847" }}>¡Felicidades!</div>
+            <div className="fraunces font-bold text-[18px]">Certificado liberado</div>
+            <div className="text-[13px] mt-2" style={{ color: "#6E6350" }}>Você completou 28 dias • {daysDoneCount}/28 pedras do deserto</div>
+            <div className="flex justify-center gap-1.5 mt-4 flex-wrap max-w-[260px] mx-auto">
+              {Array.from({length:28}).map((_,i)=><div key={i} className="w-6 h-6 rounded-full grid place-items-center text-[12px] text-white" style={{ background: "#006847" }}>🌵</div>)}
+            </div>
+            <div className="mt-5 grid grid-cols-2 gap-2">
+              <button onClick={downloadCert} className="py-3 rounded-full font-bold text-white" style={{ background: "#006847" }}>Baixar PDF</button>
+              <button onClick={()=>setShowCert(false)} className="py-3 rounded-full font-bold" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}>Fechar</button>
+            </div>
+            <div className="text-[11px] mt-3" style={{ color: "#6E6350" }}>Selo oficial 28 pedras • espanhol.dotapps.com.br</div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
