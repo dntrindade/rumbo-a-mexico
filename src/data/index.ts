@@ -61,18 +61,18 @@ export const WEEKS = [
 ];
 
 export const TOOLS = [
-  { name: "Language Transfer", type: "App / Podcast", desc: "Método auditivo, sem escrita — ativa a fala rápido.", url: "https://www.languagetransfer.org/" },
-  { name: "Dreaming Spanish", type: "YouTube", desc: "Input compreensível por nível, treina o ouvido.", url: "https://www.dreamingspanish.com/" },
-  { name: "HelloTalk", type: "App", desc: "Conversa por texto e voz com nativos mexicanos.", url: "https://www.hellotalk.com/" },
-  { name: "Tandem", type: "App", desc: "Alternativa ao HelloTalk, mesma lógica de intercâmbio.", url: "https://www.tandem.net/" },
-  { name: "LyricsTraining", type: "Site / App", desc: "Completa a letra da música enquanto ouve.", url: "https://lyricstraining.com/" },
-  { name: "Superholly", type: "YouTube", desc: "Gírias e cultura mexicana, sotaque autêntico.", url: "https://www.youtube.com/@superholly" },
-  { name: "Butterfly Spanish", type: "YouTube", desc: "Conversação clara em espanhol latino.", url: "https://www.youtube.com/@ButterflySpanish" },
-  { name: "Easy Spanish", type: "YouTube", desc: "Entrevistas de rua em várias regiões.", url: "https://www.youtube.com/@EasySpanish" },
-  { name: "Español Automático", type: "Podcast", desc: "Histórias narradas devagar, boa transição.", url: "https://www.espanolautomatico.com/" },
-  { name: "ChatGPT (voz)", type: "App / Web", desc: "Treino de conversa ilimitado, sem julgamento.", url: "https://chatgpt.com/" },
-  { name: "Anki / Quizlet", type: "App", desc: "Flashcards de vocabulário, repetição espaçada.", url: "https://apps.ankiweb.net/" },
-  { name: "Duolingo", type: "App", desc: "10 min/dia de reforço de vocabulário (complementar).", url: "https://www.duolingo.com/" },
+  { name: "Language Transfer", type: "App / Podcast", desc: "Método auditivo, sem escrita — ativa a fala rápido.", url: "https://www.languagetransfer.org/", emoji: "🎧", gradient: "from-[#FF8A50] via-[#FFC876] to-[#FFF0C8]", accent: "#FF6B30" },
+  { name: "Dreaming Spanish", type: "YouTube", desc: "Input compreensível por nível, treina o ouvido.", url: "https://www.dreamingspanish.com/", emoji: "📺", gradient: "from-[#FF4D4D] via-[#FF8A6B] to-[#FFE5D4]", accent: "#FF3B3B" },
+  { name: "HelloTalk", type: "App", desc: "Conversa por texto e voz com nativos mexicanos.", url: "https://www.hellotalk.com/", emoji: "💬", gradient: "from-[#7ED957] via-[#A8E6A0] to-[#E8F5E9]", accent: "#006847" },
+  { name: "Tandem", type: "App", desc: "Alternativa ao HelloTalk, mesma lógica de intercâmbio.", url: "https://www.tandem.net/", emoji: "👥", gradient: "from-[#6ECBFF] via-[#9AD7FF] to-[#E6F4FF]", accent: "#2A7FFF" },
+  { name: "LyricsTraining", type: "Site / App", desc: "Completa a letra da música enquanto ouve.", url: "https://lyricstraining.com/", emoji: "🎵", gradient: "from-[#B07CFF] via-[#E2B6FF] to-[#F6E8FF]", accent: "#8B4DFF" },
+  { name: "Superholly", type: "YouTube", desc: "Gírias e cultura mexicana, sotaque autêntico.", url: "https://www.youtube.com/@superholly", emoji: "🌵", gradient: "from-[#4ADE80] via-[#A7F3D0] to-[#FEF6DE]", accent: "#006847" },
+  { name: "Butterfly Spanish", type: "YouTube", desc: "Conversação clara em espanhol latino.", url: "https://www.youtube.com/@ButterflySpanish", emoji: "🦋", gradient: "from-[#FF7EAA] via-[#FFB6D0] to-[#FFF0F5]", accent: "#FF4D8D" },
+  { name: "Easy Spanish", type: "YouTube", desc: "Entrevistas de rua em várias regiões.", url: "https://www.youtube.com/@EasySpanish", emoji: "🎤", gradient: "from-[#FFC24C] via-[#FFE082] to-[#FFF8E1]", accent: "#FF8C00" },
+  { name: "Español Automático", type: "Podcast", desc: "Histórias narradas devagar, boa transição.", url: "https://www.espanolautomatico.com/", emoji: "🎙️", gradient: "from-[#FFB86B] via-[#FFD9A0] to-[#FFF4E0]", accent: "#FF6B30" },
+  { name: "ChatGPT (voz)", type: "App / Web", desc: "Treino de conversa ilimitado, sem julgamento.", url: "https://chatgpt.com/", emoji: "🤖", gradient: "from-[#0A5C36] via-[#2E8B57] to-[#A8E6A0]", accent: "#006847" },
+  { name: "Anki / Quizlet", type: "App", desc: "Flashcards de vocabulário, repetição espaçada.", url: "https://apps.ankiweb.net/", emoji: "🗂️", gradient: "from-[#7DD3D0] via-[#B2E8E6] to-[#E6FFFE]", accent: "#1A8A88" },
+  { name: "Duolingo", type: "App", desc: "10 min/dia de reforço de vocabulário (complementar).", url: "https://www.duolingo.com/", emoji: "🦉", gradient: "from-[#7ED957] via-[#BEF264] to-[#F0FAD0]", accent: "#58CC02" },
 ];
 
 export const PLAYLIST = [
