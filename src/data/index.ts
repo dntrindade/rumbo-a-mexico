@@ -76,34 +76,58 @@ export const TOOLS = [
 ];
 
 export const PLAYLIST = [
-  { tier: "Fácil — dicção clara e lenta", songs: [["Renuévame","Marcos Witt"],["Tu Fidelidad","Jesús Adrián Romero"],["Cuán Grande es Él","Danilo Montero"]] as [string,string][] },
-  { tier: "Médio", songs: [["Reyes y Sacerdotes","Miel San Marcos"],["Puedo Ver","Christine D'Clario"]] as [string,string][] },
-  { tier: "Louvor animado — ainda claro", songs: [["Cambia mi Corazón","Marcos Witt"],["Alfa y Omega","Barak"]] as [string,string][] },
-  { tier: "Avançado — mais rápido", songs: [["Abre los Cielos","Redimi2 (feat. Miel San Marcos)"]] as [string,string][] },
+  {
+    tier: "Fácil — dicção clara e lenta",
+    songs: [
+      { title: "Renuévame", artist: "Marcos Witt", gradient: "from-[#FF6B30] to-[#FFB86A]", emoji: "🎧" },
+      { title: "Tu Fidelidad", artist: "Jesús Adrián Romero", gradient: "from-[#6B4EFF] to-[#FF8AC6]", emoji: "🎵" },
+      { title: "Cuán Grande es Él", artist: "Danilo Montero", gradient: "from-[#0A5C36] to-[#2ECC71]", emoji: "✨" },
+    ],
+  },
+  {
+    tier: "Médio",
+    songs: [
+      { title: "Reyes y Sacerdotes", artist: "Miel San Marcos", gradient: "from-[#FF4E50] to-[#F9D423]", emoji: "👑" },
+      { title: "Puedo Ver", artist: "Christine D'Clario", gradient: "from-[#4776E6] to-[#8E54E9]", emoji: "👁️" },
+    ],
+  },
+  {
+    tier: "Louvor animado — ainda claro",
+    songs: [
+      { title: "Cambia mi Corazón", artist: "Marcos Witt", gradient: "from-[#00C9FF] to-[#92FE9D]", emoji: "💚" },
+      { title: "Alfa y Omega", artist: "Barak", gradient: "from-[#1A1A1A] to-[#4A4A4A]", emoji: "🔥" },
+    ],
+  },
+  {
+    tier: "Avançado — mais rápido",
+    songs: [
+      { title: "Abre los Cielos", artist: "Redimi2 (feat. Miel San Marcos)", gradient: "from-[#FF416C] to-[#FF4B2B]", emoji: "☁️" },
+    ],
+  },
 ];
 
 export const PHRASES = [
-  { es: "Hola, mi nombre es Daniel, soy desarrollador full-stack con experiencia en Node.js, React e IA generativa.", ctx: "Abertura de apresentação" },
-  { es: "Tengo más de veinte años en operaciones y hace un año me dediqué de lleno al desarrollo de software.", ctx: "Contexto de carreira" },
-  { es: "Disculpa, ¿podrías repetir la pregunta, por favor?", ctx: "Pedir repetição sem travar" },
-  { es: "Dame un momento para pensarlo.", ctx: "Ganhar tempo com naturalidade" },
-  { es: "Voy a compartir mi pantalla.", ctx: "Reunião técnica" },
-  { es: "Estoy de acuerdo, aunque también podríamos considerar…", ctx: "Concordar com ressalva" },
-  { es: "No estoy seguro en este momento, pero lo voy a investigar y les aviso.", ctx: "Não saber sem travar a conversa" },
-  { es: "Quedo atento a cualquier duda, ¡muchas gracias por su tiempo!", ctx: "Fechar reunião" },
+  { es: "Hola, mi nombre es Daniel, soy desarrollador full-stack con experiencia en Node.js, React e IA generativa.", pt: "Oi, meu nome é Daniel, sou desenvolvedor full-stack com experiência em Node.js, React e IA generativa.", ctx: "Abertura de apresentação", cat: "Abertura", icon: "🎤" },
+  { es: "Tengo más de veinte años en operaciones y hace un año me dediqué de lleno al desarrollo de software.", pt: "Tenho mais de vinte anos em operações e há um ano me dediquei integralmente ao desenvolvimento de software.", ctx: "Contexto de carreira", cat: "Carreira", icon: "🚀" },
+  { es: "Disculpa, ¿podrías repetir la pregunta, por favor?", pt: "Desculpa, você poderia repetir a pergunta, por favor?", ctx: "Pedir repetição sem travar", cat: "Travar", icon: "🛠️" },
+  { es: "Dame un momento para pensarlo.", pt: "Me dê um momento para pensar.", ctx: "Ganhar tempo com naturalidade", cat: "Ganhar tempo", icon: "⏳" },
+  { es: "Voy a compartir mi pantalla.", pt: "Vou compartilhar minha tela.", ctx: "Reunião técnica", cat: "Técnica", icon: "🧠" },
+  { es: "Estoy de acuerdo, aunque también podríamos considerar…", pt: "Concordo, embora também pudéssemos considerar…", ctx: "Concordar com ressalva", cat: "Acordo", icon: "🤝" },
+  { es: "No estoy seguro en este momento, pero lo voy a investigar y les aviso.", pt: "Não tenho certeza no momento, mas vou pesquisar e aviso vocês.", ctx: "Não saber sem travar a conversa", cat: "Travar", icon: "🛠️" },
+  { es: "Quedo atento a cualquier duda, ¡muchas gracias por su tiempo!", pt: "Fico à disposição para qualquer dúvida, muito obrigado pelo tempo de vocês!", ctx: "Fechar reunião", cat: "Acordo", icon: "✨" },
 ];
 
-export const VOCAB: [string,string][] = [
-  ["código heredado / legado","código legado"],
-  ["pruebas automatizadas","testes automatizados"],
-  ["control de versiones","controle de versão"],
-  ["integración continua","integração contínua"],
-  ["arquitectura","arquitetura"],
-  ["depuración","depuração"],
-  ["revisión de código","revisão de código"],
-  ["implementar / desplegar","implantar / deploy"],
-  ["requisitos","requisitos"],
-  ["tablero / panel","painel / dashboard"]
+export const VOCAB = [
+  { es: "código heredado / legado", fon: "/ˈko.di.ɣo e.reˈða.ðo/", pt: "código legado", cat: "Arquitetura", color: "#006847", exemplo: "Tenemos mucho código heredado que refactorizar antes del deploy." },
+  { es: "pruebas automatizadas", fon: "/ˈpɾwe.βas au.to.ma.tiˈθa.ðas/", pt: "testes automatizados", cat: "Testes", color: "#B7791F", exemplo: "Necesitamos aumentar la cobertura de pruebas automatizadas al 80%." },
+  { es: "control de versiones", fon: "/konˈtɾol de βerˈsjo.nes/", pt: "controle de versão", cat: "Versionamento", color: "#2757A6", exemplo: "Usamos Git como control de versiones en todo el equipo." },
+  { es: "integración continua", fon: "/in.te.ɣɾaˈsjon konˈti.nwa/", pt: "integração contínua", cat: "DevOps", color: "#7C3AED", exemplo: "La integración continua nos avisa si algo rompe el build." },
+  { es: "arquitectura", fon: "/ar.ki.tekˈtu.ɾa/", pt: "arquitetura", cat: "Arquitetura", color: "#006847", exemplo: "Debemos repensar la arquitectura para soportar más tráfico." },
+  { es: "depuración", fon: "/de.pu.ɾaˈsjon/", pt: "depuração / debug", cat: "Debug", color: "#CE1126", exemplo: "La depuración de este microservicio nos tomó toda la tarde." },
+  { es: "revisión de código", fon: "/re.βiˈsjon de ˈko.di.ɣo/", pt: "code review", cat: "Processo", color: "#006847", exemplo: "Dejé algunos comentarios en tu revisión de código." },
+  { es: "implementar / desplegar", fon: "/im.ple.menˈtar / des.pleˈɣar/", pt: "implementar / fazer deploy", cat: "Deploy", color: "#E86A33", exemplo: "Vamos a desplegar a producción esta noche a las 22h." },
+  { es: "requisitos", fon: "/re.kiˈsi.tos/", pt: "requisitos", cat: "Produto", color: "#B7791F", exemplo: "Los requisitos cambiaron después de la reunión con el cliente." },
+  { es: "tablero / panel", fon: "/taˈβle.ɾo / paˈnel/", pt: "quadro / board", cat: "Gestão", color: "#2757A6", exemplo: "Actualicé el tablero de Jira con las tareas del sprint." },
 ];
 
 export const STORE_KEY = 'rumbo_a_mexico_progress_v1';
