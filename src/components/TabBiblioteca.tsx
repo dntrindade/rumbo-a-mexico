@@ -200,7 +200,7 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
               </div>
 
               {/* filtro por dificuldade */}
-              <div className="flex gap-2 overflow-x-auto pb-3 mb-1">
+              <div className="flex gap-2 overflow-x-auto pb-3 mb-5">
                 {MUSIC_FILTERS.map(f => (
                   <button
                     key={f.id}
@@ -252,7 +252,7 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
           {/* ================= FRASES — redesenhado ================= */}
           {biblioTab === "frases" && (
             <div>
-              <div className="flex gap-2 overflow-x-auto pb-3 mb-1">
+              <div className="flex gap-2 overflow-x-auto pb-3 mb-5">
                 {PHRASE_CATS.map(c => (
                   <button
                     key={c}
@@ -265,7 +265,7 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
                 ))}
               </div>
 
-              <div className="grid gap-4 mt-2">
+              <div className="grid sm:grid-cols-2 gap-4">
                 {filteredPhrases.map((p, i) => {
                   const globalIndex = PHRASES.indexOf(p);
                   const isSaved = savedPhrases.includes(globalIndex);
