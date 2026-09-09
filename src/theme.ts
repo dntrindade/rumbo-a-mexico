@@ -50,4 +50,8 @@ export const GLOBAL_STYLE = `
     0%, 100% { box-shadow: 0 0 0 0 rgba(232,106,51,0.35), 0 8px 24px rgba(232,106,51,0.3); }
     50% { box-shadow: 0 0 0 10px rgba(232,106,51,0.12), 0 10px 28px rgba(232,106,51,0.4); }
   }
+  @keyframes soundWave {
+    0%, 100% { transform: scaleY(0.7); }
+    50% { transform: scaleY(1.3); }
+  }
 `;

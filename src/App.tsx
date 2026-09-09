@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useProgress } from "./hooks/useProgress";
 import { GLOBAL_STYLE } from "./theme";
 import { Header } from "./components/Header";
+import { Cover } from "./components/Cover";
 import { TabsNav, TabId } from "./components/TabsNav";
 import { TabHoje } from "./components/TabHoje";
 import { TabTrilha } from "./components/TabTrilha";
@@ -10,6 +11,7 @@ import { CertModal } from "./components/CertModal";
 import { Footer } from "./components/Footer";
 
 export default function App() {
+  const [showCover, setShowCover] = useState(true);
   const [activeTab, setActiveTab] = useState<TabId>('trilha');
   const [biblioTab, setBiblioTab] = useState<BiblioTabId>('ferramentas');
   const [todayIndex, setTodayIndex] = useState(11); // Dia 12 como exemplo aprovado
@@ -53,6 +55,15 @@ export default function App() {
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  if (showCover) {
+    return (
+      <>
+        <style>{GLOBAL_STYLE}</style>
+        <Cover onStart={() => setShowCover(false)} />
+      </>
+    );
+  }
 
   return (
     <div className="min-h-screen overflow-x-hidden" style={{ background: "#FDF6E3", color: "#1A1A1A" }}>
