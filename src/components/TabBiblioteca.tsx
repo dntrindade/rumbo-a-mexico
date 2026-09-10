@@ -612,7 +612,7 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
           )}
           {/* ================= FIM FRASES ================= */}
 
-          {/* ================= VOCAB — redesenhado ================= */}
+          {/* ================= VOCAB — redesenhado com áudio =====   ================= */}
           {biblioTab === "vocab" && (
             <div>
               <div className="relative mb-5">
@@ -631,7 +631,14 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
 
               <div className="grid gap-3">
                 {filteredVocab.map((v, i) => {
-                  const key = `vocab-${i}`;
+                  const handlePlayAudio = () => {
+                    const utterance = new SpeechSynthesisUtterance(v.es);
+                    utterance.lang = "es-MX";
+                    utterance.rate = 0.9;
+                    window.speechSynthesis.cancel();
+                    window.speechSynthesis.speak(utterance);
+                  };
+
                   return (
                     <div key={i} className="rounded-[18px] overflow-hidden md:flex" style={{ background: "#FFFEFA", border: "1.5px solid #E8DCC3" }}>
                       <div className="md:w-[42%] p-4 md:p-5">
@@ -640,6 +647,15 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
                         </div>
                         <div className="italic fraunces font-extrabold text-[15px] md:text-[16px] leading-tight">{v.es}</div>
                         <div className="mt-1.5 text-[11px] font-mono" style={{ color: "#B8AFA0" }}>{v.fon}</div>
+                        
+                        {/* BOTÃO DE ÁUDIO */}
+                        <button
+                          onClick={handlePlayAudio}
+                          className="mt-3 h-8 px-3 rounded-full text-[11px] font-bold flex items-center gap-1.5 transition hover:scale-105"
+                          style={{ background: "#E8F5E9", color: "#006847", border: "1px solid #C8E6C9" }}
+                        >
+                          🔊 Ouvir
+                        </button>
                       </div>
                       <div className="hidden md:flex w-[52px] shrink-0 items-center justify-center">
                         <div className="w-9 h-9 rounded-full grid place-items-center text-[13px]" style={{ background: "#E8F5E9", border: "1px solid #C8E6C9" }}>↔️</div>
@@ -653,11 +669,11 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
                             </div>
                           </div>
                           <button
-                            onClick={() => copyText(v.es, key)}
+                            onClick={() => copyText(v.es, `vocab-${i}`)}
                             className="shrink-0 w-9 h-9 rounded-full grid place-items-center text-[13px] transition"
-                            style={{ background: copiedKey === key ? "#1A1A1A" : "#FFFEFA", color: copiedKey === key ? "#fff" : "#5A5A5A", border: "1px solid #E8DCC3" }}
+                            style={{ background: copiedKey === `vocab-${i}` ? "#1A1A1A" : "#FFFEFA", color: copiedKey === `vocab-${i}` ? "#fff" : "#5A5A5A", border: "1px solid #E8DCC3" }}
                           >
-                            {copiedKey === key ? "✓" : "📋"}
+                            {copiedKey === `vocab-${i}` ? "✓" : "📋"}
                           </button>
                         </div>
                       </div>
