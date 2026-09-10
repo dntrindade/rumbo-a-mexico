@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { TOOLS, PLAYLIST, PHRASES, VOCAB } from "../data";
 
 // ===== FUNÇÃO: Levenshtein Distance (Similaridade de Texto) =====
@@ -96,11 +96,44 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
   const [recordingStates, setRecordingStates] = useState<{ [key: number]: { isRecording: boolean; audioURL: string | null; transcript: string; score: number | null } }>({});
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+  const recognitionRef = useRef<any>(null);
+  const isMountedRef = useRef(true);
 
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 1800);
   };
+
+  // Cleanup ao desmontar componente
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+      
+      // Parar Speech Recognition
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort();
+          recognitionRef.current.stop();
+        } catch (e) {
+          // Ignorar erros ao parar
+        }
+        recognitionRef.current = null;
+      }
+      
+      // Parar MediaRecorder
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+        try {
+          mediaRecorderRef.current.stop();
+        } catch (e) {
+          // Ignorar erros ao parar
+        }
+        mediaRecorderRef.current = null;
+      }
+      
+      // Limpar Blobs
+      audioChunksRef.current = [];
+    };
+  }, []);
 
   const copyText = async (text: string, key: string) => {
     try {
@@ -333,6 +366,84 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
 
                   const handleStartRecording = async () => {
                     try {
+                      // Iniciar Speech Recognition em paralelo
+                      const SpeechRecognitionAPI =
+                        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+                      if (!SpeechRecognitionAPI) {
+                        showToast("Reconhecimento de fala não suportado neste navegador");
+                        return;
+                      }
+
+                      const recognition = new SpeechRecognitionAPI();
+                      recognitionRef.current = recognition;
+                      recognition.lang = "es-MX";
+                      recognition.continuous = true;
+                      recognition.interimResults = true;
+
+                      let finalTranscript = "";
+
+                      recognition.onstart = () => {
+                        if (isMountedRef.current) {
+                          setRecordingStates(prev => ({
+                            ...prev,
+                            [globalIndex]: { isRecording: true, audioURL: null, transcript: "", score: null }
+                          }));
+                        }
+                      };
+
+                      recognition.onresult = (event: any) => {
+                        if (!isMountedRef.current) return;
+                        
+                        let interimTranscript = "";
+                        for (let i = event.resultIndex; i < event.results.length; i++) {
+                          const transcript = event.results[i][0].transcript;
+                          if (event.results[i].isFinal) {
+                            finalTranscript += transcript + " ";
+                          } else {
+                            interimTranscript += transcript;
+                          }
+                        }
+
+                        setRecordingStates(prev => ({
+                          ...prev,
+                          [globalIndex]: { 
+                            ...prev[globalIndex], 
+                            transcript: finalTranscript || interimTranscript 
+                          }
+                        }));
+                      };
+
+                      recognition.onerror = (event: any) => {
+                        console.error("Erro no reconhecimento:", event.error);
+                        if (isMountedRef.current) {
+                          showToast(`Erro ao reconhecer: ${event.error}`);
+                        }
+                      };
+
+                      recognition.onend = () => {
+                        if (!isMountedRef.current) return;
+                        
+                        try {
+                          if (finalTranscript.trim()) {
+                            const score = calculateSimilarityScore(p.es, finalTranscript);
+                            if (isMountedRef.current) {
+                              setRecordingStates(prev => ({
+                                ...prev,
+                                [globalIndex]: { 
+                                  ...prev[globalIndex], 
+                                  score,
+                                  isRecording: false
+                                }
+                              }));
+                            }
+                          }
+                        } catch (e) {
+                          // Ignorar erros ao finalizar
+                        }
+                      };
+
+                      // Iniciar gravação de áudio
                       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                       const mediaRecorder = new MediaRecorder(stream);
                       mediaRecorderRef.current = mediaRecorder;
@@ -343,60 +454,34 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
                       };
 
                       mediaRecorder.onstop = () => {
+                        if (!isMountedRef.current) {
+                          stream.getTracks().forEach((track) => track.stop());
+                          return;
+                        }
+
                         const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
                         const audioURL = URL.createObjectURL(audioBlob);
                         
                         setRecordingStates(prev => ({
                           ...prev,
-                          [globalIndex]: { isRecording: false, audioURL, transcript: "", score: null }
+                          [globalIndex]: { 
+                            ...prev[globalIndex], 
+                            audioURL,
+                            isRecording: false
+                          }
                         }));
 
-                        // Iniciar reconhecimento de fala
-                        setTimeout(() => performSpeechRecognition(audioURL, globalIndex, p.es), 1000);
+                        recognition.stop();
                         stream.getTracks().forEach((track) => track.stop());
                       };
 
                       mediaRecorder.start();
-                      setRecordingStates(prev => ({
-                        ...prev,
-                        [globalIndex]: { ...currentState, isRecording: true }
-                      }));
+                      recognition.start();
                     } catch (err) {
-                      showToast("Permissão de microfone negada");
+                      if (isMountedRef.current) {
+                        showToast("Permissão de microfone negada");
+                      }
                     }
-                  };
-
-                  const performSpeechRecognition = (audioURL: string, idx: number, originalText: string) => {
-                    const SpeechRecognitionAPI =
-                      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-                    if (!SpeechRecognitionAPI) {
-                      showToast("Reconhecimento de fala não suportado");
-                      return;
-                    }
-
-                    const recognition = new SpeechRecognitionAPI();
-                    recognition.lang = "es-MX";
-                    recognition.continuous = false;
-
-                    recognition.onresult = (event: any) => {
-                      const transcribed = Array.from(event.results)
-                        .map((result: any) => result[0].transcript)
-                        .join("");
-
-                      const score = calculateSimilarityScore(originalText, transcribed);
-
-                      setRecordingStates(prev => ({
-                        ...prev,
-                        [idx]: { ...prev[idx], transcript: transcribed, score }
-                      }));
-                    };
-
-                    recognition.onerror = () => {
-                      showToast("Erro ao processar áudio");
-                    };
-
-                    recognition.start();
                   };
 
                   const handleClearRecording = () => {
