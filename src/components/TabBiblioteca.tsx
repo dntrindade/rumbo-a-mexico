@@ -251,7 +251,7 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
 
           {/* ================= FRASES — redesenhado ================= */}
           {biblioTab === "frases" && (
-            <div>
+            <>
               <div className="flex gap-2 overflow-x-auto pb-3 mb-5">
                 {PHRASE_CATS.map(c => (
                   <button
