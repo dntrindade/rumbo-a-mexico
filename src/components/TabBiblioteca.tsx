@@ -125,7 +125,7 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
         </div>
 
         {/* CONTEÚDO PRINCIPAL */}
-        <div>
+        <div className="min-w-0">
           <div className="mb-5">
             <div className="fraunces font-extrabold text-[26px] md:text-[30px] leading-[1.05] tracking-tight">
               {headline.title} <span style={{ color: "#006847" }}>•</span> <span className="font-normal italic">{headline.accent}</span>
