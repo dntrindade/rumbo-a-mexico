@@ -319,7 +319,7 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
                   );
                 })}
               </div>
-            </div>
+            </>
           )}
           {/* ================= FIM FRASES ================= */}
 
