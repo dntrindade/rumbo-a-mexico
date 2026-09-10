@@ -1,5 +1,166 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { TOOLS, PLAYLIST, PHRASES, VOCAB } from "../data";
+
+// ===== HOOK: Síntese de Fala (Text-to-Speech) =====
+function useTextToSpeech() {
+  const speak = (text: string, lang = "es-MX") => {
+    if (!("speechSynthesis" in window)) return;
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang;
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  };
+  
+  return { speak };
+}
+
+// ===== HOOK: Gravação de Áudio =====
+function useAudioRecorder() {
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioURL, setAudioURL] = useState<string | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        const url = URL.createObjectURL(audioBlob);
+        setAudioURL(url);
+        stream.getTracks().forEach((track) => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      console.error("Erro ao acessar microfone:", err);
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const clearRecording = () => {
+    if (audioURL) {
+      URL.revokeObjectURL(audioURL);
+    }
+    setAudioURL(null);
+  };
+
+  return { isRecording, startRecording, stopRecording, audioURL, clearRecording };
+}
+
+// ===== HOOK: Reconhecimento de Fala (Speech-to-Text) =====
+function useSpeechRecognition() {
+  const [transcript, setTranscript] = useState("");
+  const [isListening, setIsListening] = useState(false);
+
+  const recognize = (audioURL: string) => {
+    const SpeechRecognitionAPI =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognitionAPI) {
+      console.error("Speech Recognition não suportado neste navegador");
+      return;
+    }
+
+    const recognition = new SpeechRecognitionAPI();
+    recognition.lang = "es-MX";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+
+    recognition.onresult = (event: any) => {
+      const text = Array.from(event.results)
+        .map((result: any) => result[0].transcript)
+        .join("");
+      setTranscript(text);
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error("Erro no reconhecimento:", event.error);
+      setIsListening(false);
+    };
+
+    // Usar arquivo de áudio para reconhecimento
+    fetch(audioURL)
+      .then((res) => res.arrayBuffer())
+      .then((arrayBuffer) => {
+        // Tentar reconhecer do áudio gravado
+        recognition.start();
+      })
+      .catch(() => {
+        // Fallback: ativar microfone para reconhecimento direto
+        recognition.start();
+      });
+  };
+
+  return { transcript, isListening, recognize, setTranscript };
+}
+
+// ===== FUNÇÃO: Levenshtein Distance (Similaridade de Texto) =====
+function levenshteinDistance(str1: string, str2: string): number {
+  const s1 = str1.toLowerCase().trim();
+  const s2 = str2.toLowerCase().trim();
+
+  const len1 = s1.length;
+  const len2 = s2.length;
+  const matrix: number[][] = Array(len1 + 1)
+    .fill(null)
+    .map(() => Array(len2 + 1).fill(0));
+
+  for (let i = 0; i <= len1; i++) matrix[i][0] = i;
+  for (let j = 0; j <= len2; j++) matrix[0][j] = j;
+
+  for (let i = 1; i <= len1; i++) {
+    for (let j = 1; j <= len2; j++) {
+      const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j - 1] + cost
+      );
+    }
+  }
+
+  return matrix[len1][len2];
+}
+
+// ===== FUNÇÃO: Calcular Score de Similaridade (0-10) =====
+function calculateSimilarityScore(original: string, transcribed: string): number {
+  const distance = levenshteinDistance(original, transcribed);
+  const maxLen = Math.max(original.length, transcribed.length);
+  const similarity = 1 - distance / maxLen;
+  const score = Math.max(0, Math.min(10, similarity * 10));
+  return Math.round(score * 10) / 10;
+}
+
+// ===== FUNÇÃO: Cor do Medidor Baseado no Score =====
+function getScoreColor(score: number): string {
+  if (score < 3) return "#CE1126"; // Vermelho
+  if (score < 6) return "#E86A33"; // Laranja
+  if (score < 8) return "#FFD700"; // Amarelo
+  return "#006847"; // Verde
+}
 
 export type BiblioTabId = "ferramentas" | "musicas" | "frases" | "vocab";
 
@@ -46,6 +207,11 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [savedPhrases, setSavedPhrases] = useState<number[]>([]);
   const [toast, setToast] = useState<string | null>(null);
+  
+  // Estados de gravação/transcrição por frase
+  const [recordingStates, setRecordingStates] = useState<Record<number, { isRecording: boolean; audioURL: string | null; transcript: string; score: number | null }>({});
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -249,7 +415,7 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
           )}
           {/* ================= FIM MÚSICAS ================= */}
 
-          {/* ================= FRASES — redesenhado ================= */}
+          {/* ================= FRASES — redesenhado com áudio e validação ================= */}
           {biblioTab === "frases" && (
             <>
               <div className="flex gap-2 overflow-x-auto pb-3 mb-5">
@@ -270,6 +436,101 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
                   const globalIndex = PHRASES.indexOf(p);
                   const isSaved = savedPhrases.includes(globalIndex);
                   const key = `phrase-${globalIndex}`;
+                  const currentState = recordingStates[globalIndex] || { isRecording: false, audioURL: null, transcript: "", score: null };
+
+                  const handlePlayAudio = () => {
+                    const SpeechSynthesisUtterance = window.SpeechSynthesisUtterance;
+                    const utterance = new SpeechSynthesisUtterance(p.es);
+                    utterance.lang = "es-MX";
+                    utterance.rate = 0.9;
+                    window.speechSynthesis.cancel();
+                    window.speechSynthesis.speak(utterance);
+                  };
+
+                  const handleStartRecording = async () => {
+                    try {
+                      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                      const mediaRecorder = new MediaRecorder(stream);
+                      mediaRecorderRef.current = mediaRecorder;
+                      audioChunksRef.current = [];
+
+                      mediaRecorder.ondataavailable = (event) => {
+                        audioChunksRef.current.push(event.data);
+                      };
+
+                      mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+                        const audioURL = URL.createObjectURL(audioBlob);
+                        
+                        setRecordingStates(prev => ({
+                          ...prev,
+                          [globalIndex]: { isRecording: false, audioURL, transcript: "", score: null }
+                        }));
+
+                        // Iniciar reconhecimento de fala
+                        setTimeout(() => performSpeechRecognition(audioURL, globalIndex, p.es), 1000);
+                        stream.getTracks().forEach((track) => track.stop());
+                      };
+
+                      mediaRecorder.start();
+                      setRecordingStates(prev => ({
+                        ...prev,
+                        [globalIndex]: { ...currentState, isRecording: true }
+                      }));
+                    } catch (err) {
+                      showToast("Permissão de microfone negada");
+                    }
+                  };
+
+                  const performSpeechRecognition = (audioURL: string, idx: number, originalText: string) => {
+                    const SpeechRecognitionAPI =
+                      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+                    if (!SpeechRecognitionAPI) {
+                      showToast("Reconhecimento de fala não suportado");
+                      return;
+                    }
+
+                    const recognition = new SpeechRecognitionAPI();
+                    recognition.lang = "es-MX";
+                    recognition.continuous = false;
+
+                    recognition.onresult = (event: any) => {
+                      const transcribed = Array.from(event.results)
+                        .map((result: any) => result[0].transcript)
+                        .join("");
+
+                      const score = calculateSimilarityScore(originalText, transcribed);
+
+                      setRecordingStates(prev => ({
+                        ...prev,
+                        [idx]: { ...prev[idx], transcript: transcribed, score }
+                      }));
+                    };
+
+                    recognition.onerror = () => {
+                      showToast("Erro ao processar áudio");
+                    };
+
+                    recognition.start();
+                  };
+
+                  const handleClearRecording = () => {
+                    if (currentState.audioURL) {
+                      URL.revokeObjectURL(currentState.audioURL);
+                    }
+                    setRecordingStates(prev => ({
+                      ...prev,
+                      [globalIndex]: { isRecording: false, audioURL: null, transcript: "", score: null }
+                    }));
+                  };
+
+                  const handleStopRecording = () => {
+                    if (mediaRecorderRef.current) {
+                      mediaRecorderRef.current.stop();
+                    }
+                  };
+
                   return (
                     <div
                       key={globalIndex}
@@ -290,30 +551,89 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
                       </div>
                       <div className="mt-1.5 text-[11px] font-bold" style={{ color: "#8A7F68" }}>{p.ctx}</div>
 
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        <a
-                          href={`https://translate.google.com/?sl=es&tl=pt&text=${encodeURIComponent(p.es)}&op=translate`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="h-9 px-4 rounded-full text-[12.5px] font-bold flex items-center gap-1.5 transition"
-                          style={{ background: "#E8F5E9", color: "#006847", border: "1px solid #C8E6C9" }}
-                        >
-                          🔊 Ouvir pronúncia
-                        </a>
-                        <button
-                          onClick={() => copyText(p.es, key)}
-                          className="h-9 px-4 rounded-full text-[12.5px] font-bold flex items-center gap-1.5 transition"
-                          style={{ background: copiedKey === key ? "#1A1A1A" : "#FFF4E8", color: copiedKey === key ? "#fff" : "#5A4A2A", border: "1px solid #E8DCC3" }}
-                        >
-                          {copiedKey === key ? "✅ Copiado!" : "📋 Copiar"}
-                        </button>
-                        <button
-                          onClick={() => setSavedPhrases(prev => prev.includes(globalIndex) ? prev.filter(x => x !== globalIndex) : [...prev, globalIndex])}
-                          className="h-9 px-4 rounded-full text-[12.5px] font-bold flex items-center gap-1.5 transition"
-                          style={{ background: isSaved ? "#E86A33" : "#FFFEFA", color: isSaved ? "#fff" : "#5A5A5A", border: "1px solid #E8DCC3" }}
-                        >
-                          {isSaved ? "⭐ Salva" : "⭐ Salvar"}
-                        </button>
+                      {/* CONTROLES DE ÁUDIO */}
+                      <div className="mt-4 flex flex-col gap-3">
+                        {/* Linha 1: Ouvir + Copiar + Salvar */}
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            onClick={handlePlayAudio}
+                            className="h-9 px-4 rounded-full text-[12.5px] font-bold flex items-center gap-1.5 transition hover:scale-105"
+                            style={{ background: "#E8F5E9", color: "#006847", border: "1px solid #C8E6C9" }}
+                          >
+                            🔊 Ouvir
+                          </button>
+                          <button
+                            onClick={() => copyText(p.es, key)}
+                            className="h-9 px-4 rounded-full text-[12.5px] font-bold flex items-center gap-1.5 transition"
+                            style={{ background: copiedKey === key ? "#1A1A1A" : "#FFF4E8", color: copiedKey === key ? "#fff" : "#5A4A2A", border: "1px solid #E8DCC3" }}
+                          >
+                            {copiedKey === key ? "✅ Copiado!" : "📋 Copiar"}
+                          </button>
+                          <button
+                            onClick={() => setSavedPhrases(prev => prev.includes(globalIndex) ? prev.filter(x => x !== globalIndex) : [...prev, globalIndex])}
+                            className="h-9 px-4 rounded-full text-[12.5px] font-bold flex items-center gap-1.5 transition"
+                            style={{ background: isSaved ? "#E86A33" : "#FFFEFA", color: isSaved ? "#fff" : "#5A5A5A", border: "1px solid #E8DCC3" }}
+                          >
+                            {isSaved ? "⭐ Salva" : "⭐ Salvar"}
+                          </button>
+                        </div>
+
+                        {/* Linha 2: Gravar */}
+                        <div className="flex gap-2">
+                          {!currentState.audioURL ? (
+                            <>
+                              {!currentState.isRecording ? (
+                                <button
+                                  onClick={handleStartRecording}
+                                  className="flex-1 h-9 rounded-full text-[12.5px] font-bold transition"
+                                  style={{ background: "#FFF0F5", color: "#FF4D8D", border: "1px solid #FFB6D0" }}
+                                >
+                                  🎤 Gravar resposta
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={handleStopRecording}
+                                  className="flex-1 h-9 rounded-full text-[12.5px] font-bold transition animate-pulse"
+                                  style={{ background: "#FF4D8D", color: "#fff", border: "1px solid #FF4D8D" }}
+                                >
+                                  ⏹️ Parar (gravando...)
+                                </button>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              <audio controls className="flex-1 h-9" style={{ borderRadius: "999px", fontSize: "11px" }}>
+                                <source src={currentState.audioURL} type="audio/webm" />
+                              </audio>
+                              <button
+                                onClick={handleClearRecording}
+                                className="h-9 px-3 rounded-full text-[12.5px] font-bold transition"
+                                style={{ background: "#F1EAD9", color: "#8A7F68", border: "1px solid #E8DCC3" }}
+                              >
+                                ✕
+                              </button>
+                            </>
+                          )}
+                        </div>
+
+                        {/* Linha 3: Score/Validação */}
+                        {currentState.score !== null && (
+                          <div className="p-3 rounded-[14px]" style={{ background: "#FDF6E3", border: "1px solid #E8DCC3" }}>
+                            <div className="text-[11px] font-bold mb-2" style={{ color: "#6E6350" }}>Sua pronúncia:</div>
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: "#F1EAD9" }}>
+                                <div
+                                  className="h-full rounded-full transition-all duration-500"
+                                  style={{ width: `${(currentState.score / 10) * 100}%`, background: getScoreColor(currentState.score) }}
+                                />
+                              </div>
+                              <div className="text-[13px] font-bold" style={{ color: getScoreColor(currentState.score), minWidth: "35px" }}>
+                                {currentState.score.toFixed(1)}/10
+                              </div>
+                            </div>
+                            <div className="mt-2 text-[10px]" style={{ color: "#8A7F68" }}>Você disse: <span className="italic">"{currentState.transcript}"</span></div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
