@@ -152,16 +152,69 @@ export const PHRASES = [
 ];
 
 export const VOCAB = [
-  { es: "código heredado / legado", fon: "/ˈko.di.ɣo e.reˈða.ðo/", pt: "código legado", cat: "Arquitetura", color: "#006847", exemplo: "Tenemos mucho código heredado que refactorizar antes del deploy." },
-  { es: "pruebas automatizadas", fon: "/ˈpɾwe.βas au.to.ma.tiˈθa.ðas/", pt: "testes automatizados", cat: "Testes", color: "#B7791F", exemplo: "Necesitamos aumentar la cobertura de pruebas automatizadas al 80%." },
-  { es: "control de versiones", fon: "/konˈtɾol de βerˈsjo.nes/", pt: "controle de versão", cat: "Versionamento", color: "#2757A6", exemplo: "Usamos Git como control de versiones en todo el equipo." },
-  { es: "integración continua", fon: "/in.te.ɣɾaˈsjon konˈti.nwa/", pt: "integração contínua", cat: "DevOps", color: "#7C3AED", exemplo: "La integración continua nos avisa si algo rompe el build." },
-  { es: "arquitectura", fon: "/ar.ki.tekˈtu.ɾa/", pt: "arquitetura", cat: "Arquitetura", color: "#006847", exemplo: "Debemos repensar la arquitectura para soportar más tráfico." },
-  { es: "depuración", fon: "/de.pu.ɾaˈsjon/", pt: "depuração / debug", cat: "Debug", color: "#CE1126", exemplo: "La depuración de este microservicio nos tomó toda la tarde." },
-  { es: "revisión de código", fon: "/re.βiˈsjon de ˈko.di.ɣo/", pt: "code review", cat: "Processo", color: "#006847", exemplo: "Dejé algunos comentarios en tu revisión de código." },
-  { es: "implementar / desplegar", fon: "/im.ple.menˈtar / des.pleˈɣar/", pt: "implementar / fazer deploy", cat: "Deploy", color: "#E86A33", exemplo: "Vamos a desplegar a producción esta noche a las 22h." },
-  { es: "requisitos", fon: "/re.kiˈsi.tos/", pt: "requisitos", cat: "Produto", color: "#B7791F", exemplo: "Los requisitos cambiaron después de la reunión con el cliente." },
-  { es: "tablero / panel", fon: "/taˈβle.ɾo / paˈnel/", pt: "quadro / board", cat: "Gestão", color: "#2757A6", exemplo: "Actualicé el tablero de Jira con las tareas del sprint." },
+  // ===== AEROPORTO =====
+  { es: "pasaporte", fon: "/pa.sa.ˈpor.te/", pt: "passaporte", cat: "Aeroporto", color: "#006847", exemplo: "Necesito mostrar mi pasaporte en migraciones." },
+  { es: "aduanas", fon: "/a.ˈdwa.nas/", pt: "alfândega", cat: "Aeroporto", color: "#006847", exemplo: "¿Dónde está la sección de aduanas?" },
+  { es: "equipaje", fon: "/e.ki.ˈpa.xe/", pt: "bagagem/mala", cat: "Aeroporto", color: "#006847", exemplo: "Mi equipaje está en la banda transportadora." },
+  { es: "tarjeta de embarque", fon: "/tar.ˈxe.ta de em.bar.ˈke/", pt: "cartão de embarque", cat: "Aeroporto", color: "#006847", exemplo: "¿Dónde puedo imprimir mi tarjeta de embarque?" },
+
+  // ===== HOTEL =====
+  { es: "reservación", fon: "/re.ser.ba.ˈsjon/", pt: "reserva", cat: "Hotel", color: "#E86A33", exemplo: "Tengo una reservación bajo el nombre Daniel." },
+  { es: "recepción", fon: "/re.sep.ˈsjon/", pt: "recepção", cat: "Hotel", color: "#E86A33", exemplo: "La recepción está en la planta baja." },
+  { es: "llave", fon: "/ˈʎa.βe/", pt: "chave", cat: "Hotel", color: "#E86A33", exemplo: "Perdí mi llave de la habitación." },
+  { es: "habitación", fon: "/a.bi.ta.ˈsjon/", pt: "quarto/aposento", cat: "Hotel", color: "#E86A33", exemplo: "¿Cuál es el número de mi habitación?" },
+  { es: "desayuno", fon: "/de.sa.ˈyu.no/", pt: "café da manhã", cat: "Hotel", color: "#E86A33", exemplo: "¿A qué hora es el desayuno incluido?" },
+
+  // ===== TRANSPORTE (Taxi/Uber/Ônibus) =====
+  { es: "tarifa", fon: "/ta.ˈri.fa/", pt: "tarifa/preço", cat: "Transporte", color: "#FF6B30", exemplo: "¿Cuál es la tarifa aproximada al hotel?" },
+  { es: "parada de autobús", fon: "/pa.ˈra.ða de au.to.ˈbus/", pt: "parada de ônibus", cat: "Transporte", color: "#FF6B30", exemplo: "¿Dónde está la parada de autobús más cercana?" },
+  { es: "boleto", fon: "/bo.ˈle.to/", pt: "passagem/bilhete", cat: "Transporte", color: "#FF6B30", exemplo: "Un boleto al centro, por favor." },
+  { es: "conductor", fon: "/kon.duk.ˈtor/", pt: "motorista", cat: "Transporte", color: "#FF6B30", exemplo: "El conductor conoce bien la ciudad." },
+  { es: "gasolina", fon: "/ɡa.so.ˈli.na/", pt: "gasolina", cat: "Transporte", color: "#FF6B30", exemplo: "La gasolina está cara esta semana." },
+
+  // ===== RESTAURANTE =====
+  { es: "menú", fon: "/me.ˈnu/", pt: "cardápio/menu", cat: "Restaurante", color: "#CE1126", exemplo: "¿Puede traerme el menú, por favor?" },
+  { es: "mesero", fon: "/me.ˈse.ro/", pt: "garçom", cat: "Restaurante", color: "#CE1126", exemplo: "Mesero, la cuenta, por favor." },
+  { es: "cuenta", fon: "/ˈkwen.ta/", pt: "conta", cat: "Restaurante", color: "#CE1126", exemplo: "¿Puede traerme la cuenta?" },
+  { es: "propina", fon: "/pro.ˈpi.na/", pt: "gorjeta", cat: "Restaurante", color: "#CE1126", exemplo: "La propina no está incluida en la cuenta." },
+  { es: "sopa", fon: "/ˈso.pa/", pt: "sopa", cat: "Restaurante", color: "#CE1126", exemplo: "La sopa de tortilla es típica de aquí." },
+  { es: "postre", fon: "/ˈpos.tre/", pt: "sobremesa/doce", cat: "Restaurante", color: "#CE1126", exemplo: "¿Qué postres recomiendan?" },
+
+  // ===== PADARIA/CAFÉ =====
+  { es: "pan", fon: "/pan/", pt: "pão", cat: "Padaria", color: "#B7791F", exemplo: "Quiero dos panes dulces, por favor." },
+  { es: "café", fon: "/ka.ˈfe/", pt: "café", cat: "Padaria", color: "#B7791F", exemplo: "Un café con leche, por favor." },
+  { es: "pastel", fon: "/pas.ˈtel/", pt: "bolo/pastel", cat: "Padaria", color: "#B7791F", exemplo: "¿Qué pasteles frescos tienen hoy?" },
+  { es: "leche", fon: "/ˈle.tʃe/", pt: "leite", cat: "Padaria", color: "#B7791F", exemplo: "Prefiero café con leche." },
+
+  // ===== LOJAS/COMPRAS =====
+  { es: "precio", fon: "/ˈpre.sjo/", pt: "preço", cat: "Lojas", color: "#2757A6", exemplo: "¿Cuál es el precio de esto?" },
+  { es: "talla", fon: "/ˈta.ʎa/", pt: "tamanho", cat: "Lojas", color: "#2757A6", exemplo: "¿Tienen esta camiseta en talla M?" },
+  { es: "descuento", fon: "/des.ˈkwen.to/", pt: "desconto", cat: "Lojas", color: "#2757A6", exemplo: "¿Hay descuento si compro dos?" },
+  { es: "cambio", fon: "/ˈkam.bio/", pt: "troco", cat: "Lojas", color: "#2757A6", exemplo: "¿Cuál es el cambio?" },
+  { es: "tarjeta de crédito", fon: "/tar.ˈxe.ta de ˈkre.ði.to/", pt: "cartão de crédito", cat: "Lojas", color: "#2757A6", exemplo: "¿Aceptan tarjeta de crédito?" },
+
+  // ===== DIREÇÕES/RUA =====
+  { es: "calle", fon: "/ˈka.ʎe/", pt: "rua", cat: "Rua", color: "#7C3AED", exemplo: "¿Cuál es el nombre de esta calle?" },
+  { es: "esquina", fon: "/es.ˈki.na/", pt: "esquina", cat: "Rua", color: "#7C3AED", exemplo: "La plaza está en la esquina." },
+  { es: "dirección", fon: "/di.rek.ˈsjon/", pt: "endereço", cat: "Rua", color: "#7C3AED", exemplo: "¿Cuál es tu dirección?" },
+  { es: "mapa", fon: "/ˈma.pa/", pt: "mapa", cat: "Rua", color: "#7C3AED", exemplo: "¿Tienes un mapa de la ciudad?" },
+
+  // ===== PONTOS TURÍSTICOS =====
+  { es: "museo", fon: "/mu.ˈse.o/", pt: "museu", cat: "Turismo", color: "#1A8A88", exemplo: "¿Cuál es el horario del museo?" },
+  { es: "entrada", fon: "/en.ˈtra.ða/", pt: "entrada", cat: "Turismo", color: "#1A8A88", exemplo: "¿Cuánto cuesta la entrada?" },
+  { es: "guía turístico", fon: "/ˈɡi.a tu.ˈris.ti.ko/", pt: "guia turístico", cat: "Turismo", color: "#1A8A88", exemplo: "¿Recomiendan un guía turístico?" },
+  { es: "monumento", fon: "/mo.nu.ˈmen.to/", pt: "monumento", cat: "Turismo", color: "#1A8A88", exemplo: "Este monumento tiene 500 años." },
+
+  // ===== CHIESA/RELIGIÃO =====
+  { es: "iglesia", fon: "/iɡ.ˈle.sja/", pt: "igreja", cat: "Igreja", color: "#FF4D8D", exemplo: "¿A qué hora es la misa?" },
+  { es: "misa", fon: "/ˈmi.sa/", pt: "missa", cat: "Igreja", color: "#FF4D8D", exemplo: "La misa de domingo es a las 10." },
+  { es: "oración", fon: "/o.ra.ˈsjon/", pt: "oração", cat: "Igreja", color: "#FF4D8D", exemplo: "¿Puedo orar en la iglesia?" },
+
+  // ===== FESTA/VIDA NOTURNA =====
+  { es: "discoteca", fon: "/dis.ko.ˈte.ka/", pt: "discoteca", cat: "Festa", color: "#FFD700", exemplo: "¿Dónde hay una buena discoteca cerca?" },
+  { es: "bar", fon: "/bar/", pt: "bar", cat: "Festa", color: "#FFD700", exemplo: "¿Hay un bar en este hotel?" },
+  { es: "música", fon: "/ˈmu.si.ka/", pt: "música", cat: "Festa", color: "#FFD700", exemplo: "La música en este lugar es genial." },
+  { es: "cerveza", fon: "/ser.ˈβe.sa/", pt: "cerveja", cat: "Festa", color: "#FFD700", exemplo: "Una cerveza fría, por favor." },
 ];
 
 export const STORE_KEY = 'rumbo_a_mexico_progress_v1';
