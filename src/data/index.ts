@@ -2,7 +2,7 @@
 
 export const PILLARS = [
   { code: "O", title: "Ouvir", time: "15 min", full: "Ouvir", desc: "Input em vídeo, sem cobrança de entender tudo." },
-  { code: "E", title: "Estrutura falada", time: "20-25 min", full: "Estrutura", desc: "Language Transfer — fala junto em voz alta." },
+  { code: "E", title: "Estrutura falada", time: "20-25 min", full: "Estrutura", desc: "Fala junto em voz alta — treino de pronúncia e ritmo." },
   { code: "M", title: "Música", time: "15 min", full: "Música", desc: "Canta, toca e treina o ouvido com ritmo." },
   { code: "C", title: "Conversa real", time: "10-20 min", full: "Conversa", desc: "Voz real com parceiro mexicano, sem custo." },
   { code: "V", title: "Vocabulário", time: "10 min", full: "Vocabulário", desc: "Termos técnicos e frases de reunião." },
@@ -16,7 +16,7 @@ export const WEEKS = [
       "Nada de gramática pesada ainda. O objetivo é acostumar o ouvido com o espanhol mexicano e destravar a fala com repetição guiada.",
     tasks: [
       { desc: "Assista a vídeos <b>Dreaming Spanish — nível Superbeginner</b> no YouTube. Só escute, sem se cobrar entender tudo.", url: "https://app.dreaming.com/spanish/browse?level=superbeginner" },
-      { desc: "<b>Language Transfer</b> (app/podcast grátis), curso de Espanhol — lições 1 a 5 essa semana. Fale em voz alta junto com o áudio, sempre.", url: "https://www.languagetransfer.org/complete-spanish" },
+      { desc: "<b>Superholly</b> (YouTuber mexicana) — vídeos de 5-10 min sobre estrutura e gírias mexicanas. Fale em voz alta repetindo as frases.", url: "https://www.youtube.com/@superholly" },
       { desc: "<b>LyricsTraining</b> (grátis), modo Fácil — Marcos Witt (\"Renuévame\") ou Jesús Adrián Romero (\"Tu Fidelidad\"). Depois cante a música inteira uma vez.", url: "https://www.youtube.com/results?search_query=Renu%C3%A9vame+Marcos+Witt+letra" },
       { desc: "Ainda sem parceiro: grave um áudio de 1 min se apresentando em espanhol e ouça de volta.", url: "https://vocaroo.com/" },
       { desc: "Monte no Anki/Quizlet (grátis) um baralho <b>\"Apresentação pessoal\"</b> com 15 frases básicas.", url: "https://apps.ankiweb.net/" },
@@ -28,7 +28,7 @@ export const WEEKS = [
     focus: "Hora de sair da teoria e falar com gente de verdade. Vai errar muito — isso é esperado.",
     tasks: [
       { desc: "<b>Dreaming Spanish — nível Beginner</b> + 1 vídeo do canal <b>Easy Spanish</b> (entrevistas de rua) por dia.", url: "https://app.dreaming.com/spanish/browse?level=beginner" },
-      { desc: "<b>Language Transfer</b>, lições 6 a 14.", url: "https://www.languagetransfer.org/complete-spanish" },
+      { desc: "<b>Español Automático</b> (podcast em espanhol), episódios 1 a 10. Histórias narradas devagar com sotaque claro.", url: "https://www.espanolautomatico.com/" },
       { desc: "<b>LyricsTraining</b> nível Médio — Miel San Marcos ou Christine D'Clario. Escolha uma música da semana pra decorar as 2 primeiras estrofes.", url: "https://www.youtube.com/results?search_query=Reyes+y+Sacerdotes+Miel+San+Marcos+letra" },
       { desc: "Crie conta no <b>HelloTalk</b> e/ou <b>Tandem</b> (grátis), filtre parceiros no México. Um áudio ou chamada curta por dia.", url: "https://www.hellotalk.com/" },
       { desc: "Baralho <b>\"Tecnologia básica\"</b> — 15 termos (código, prueba, servidor, base de datos...).", url: "https://apps.ankiweb.net/" },
@@ -40,7 +40,7 @@ export const WEEKS = [
     focus: "Agora o foco é a reunião de trabalho de verdade: vocabulário de dev e simulação de perguntas.",
     tasks: [
       { desc: "Canal <b>Superholly</b> (gírias mexicanas) + podcast <b>Español Automático</b> (histórias narradas devagar).", url: "https://www.youtube.com/@superholly" },
-      { desc: "<b>Language Transfer</b>, lições 15 a 24 — revise as anteriores em dobro de velocidade.", url: "https://www.languagetransfer.org/complete-spanish" },
+      { desc: "<b>Butterfly Spanish</b> (YouTuber nativa), vídeos de estrutura gramatical e conversação. Repita em voz alta junto.", url: "https://www.youtube.com/@ButterflySpanish" },
       { desc: "Suba pro nível Difícil no LyricsTraining. Ouça <b>Redimi2</b> (rap cristão, fala mais rápida) só pra afinar o ouvido.", url: "https://www.youtube.com/results?search_query=Abre+los+Cielos+Redimi2+letra" },
       { desc: "2 chamadas de voz por dia no HelloTalk/Tandem. Em uma delas, treine responder <i>\"cuéntame sobre tu último proyecto\"</i>.", url: "https://www.hellotalk.com/" },
       { desc: "Baralho <b>\"Entrevista técnica\"</b> — decore as frases-chave da seção Frases.", url: "https://apps.ankiweb.net/" },
@@ -52,7 +52,7 @@ export const WEEKS = [
     focus: "Última milha: juntar tudo numa simulação completa de entrevista e reunião em espanhol.",
     tasks: [
       { desc: "Vídeos do <b>Butterfly Spanish</b> focados em <i>entrevista de trabajo</i> e <i>reunión de equipo</i>.", url: "https://www.youtube.com/@ButterflySpanish" },
-      { desc: "<b>Language Transfer</b>, lições 25+ ou revisão livre das mais difíceis.", url: "https://www.languagetransfer.org/complete-spanish" },
+      { desc: "<b>Easy Spanish</b> (YouTube) — revise vídeos antigos e foque em diálogos de entrevista. Pause e repita as falas naturais.", url: "https://www.youtube.com/@EasySpanish" },
       { desc: "Pegue o violão e cante uma música inteira em espanhol de cabeça — teste de produção livre.", url: "https://www.cifraclub.com.br/" },
       { desc: "Peça ao parceiro do HelloTalk pra simular uma pequena entrevista técnica, ou use o <b>modo de voz do ChatGPT</b> (grátis).", url: "https://chatgpt.com/" },
       { desc: "Revisão geral de todos os baralhos anteriores — sem cards novos essa semana.", url: "https://apps.ankiweb.net/" },
