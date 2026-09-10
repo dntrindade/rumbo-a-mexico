@@ -1,121 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { TOOLS, PLAYLIST, PHRASES, VOCAB } from "../data";
-
-// ===== HOOK: Síntese de Fala (Text-to-Speech) =====
-function useTextToSpeech() {
-  const speak = (text: string, lang = "es-MX") => {
-    if (!("speechSynthesis" in window)) return;
-    
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang;
-    utterance.rate = 0.9;
-    utterance.pitch = 1;
-    
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-  };
-  
-  return { speak };
-}
-
-// ===== HOOK: Gravação de Áudio =====
-function useAudioRecorder() {
-  const [isRecording, setIsRecording] = useState(false);
-  const [audioURL, setAudioURL] = useState<string | null>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
-
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = [];
-
-      mediaRecorder.ondataavailable = (event) => {
-        audioChunksRef.current.push(event.data);
-      };
-
-      mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
-        const url = URL.createObjectURL(audioBlob);
-        setAudioURL(url);
-        stream.getTracks().forEach((track) => track.stop());
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-    } catch (err) {
-      console.error("Erro ao acessar microfone:", err);
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-    }
-  };
-
-  const clearRecording = () => {
-    if (audioURL) {
-      URL.revokeObjectURL(audioURL);
-    }
-    setAudioURL(null);
-  };
-
-  return { isRecording, startRecording, stopRecording, audioURL, clearRecording };
-}
-
-// ===== HOOK: Reconhecimento de Fala (Speech-to-Text) =====
-function useSpeechRecognition() {
-  const [transcript, setTranscript] = useState("");
-  const [isListening, setIsListening] = useState(false);
-
-  const recognize = (audioURL: string) => {
-    const SpeechRecognitionAPI =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-    if (!SpeechRecognitionAPI) {
-      console.error("Speech Recognition não suportado neste navegador");
-      return;
-    }
-
-    const recognition = new SpeechRecognitionAPI();
-    recognition.lang = "es-MX";
-    recognition.continuous = false;
-    recognition.interimResults = false;
-
-    recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => setIsListening(false);
-
-    recognition.onresult = (event: any) => {
-      const text = Array.from(event.results)
-        .map((result: any) => result[0].transcript)
-        .join("");
-      setTranscript(text);
-    };
-
-    recognition.onerror = (event: any) => {
-      console.error("Erro no reconhecimento:", event.error);
-      setIsListening(false);
-    };
-
-    // Usar arquivo de áudio para reconhecimento
-    fetch(audioURL)
-      .then((res) => res.arrayBuffer())
-      .then((arrayBuffer) => {
-        // Tentar reconhecer do áudio gravado
-        recognition.start();
-      })
-      .catch(() => {
-        // Fallback: ativar microfone para reconhecimento direto
-        recognition.start();
-      });
-  };
-
-  return { transcript, isListening, recognize, setTranscript };
-}
 
 // ===== FUNÇÃO: Levenshtein Distance (Similaridade de Texto) =====
 function levenshteinDistance(str1: string, str2: string): number {
@@ -209,7 +93,7 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
   const [toast, setToast] = useState<string | null>(null);
   
   // Estados de gravação/transcrição por frase
-  const [recordingStates, setRecordingStates] = useState<Record<number, { isRecording: boolean; audioURL: string | null; transcript: string; score: number | null }>({});
+  const [recordingStates, setRecordingStates] = useState<{ [key: number]: { isRecording: boolean; audioURL: string | null; transcript: string; score: number | null } }>({});
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
