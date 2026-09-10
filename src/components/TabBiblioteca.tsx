@@ -13,7 +13,7 @@ const BIBLIO_TABS: { id: BiblioTabId; label: string }[] = [
 const HEADLINES: Record<BiblioTabId, { title: string; accent: string; sub: string }> = {
   ferramentas: { title: "Caixa de Ferramentas", accent: "seu arsenal gratuito", sub: `${TOOLS.length} recursos gratuitos, um clique de distância` },
   musicas: { title: "Trilha Sonora", accent: "suas músicas favoritas", sub: `${PLAYLIST.reduce((a, t) => a + t.songs.length, 0)} músicas anotadas por dificuldade` },
-  frases: { title: "Frases de Reunião", accent: "prontas pra usar", sub: `${PHRASES.length} frases para contexto profissional` },
+  frases: { title: "Frases de Turista", accent: "seu mini glossário", sub: `${PHRASES.length} frases prontas para usar em qualquer situação` },
   vocab: { title: "Vocabulário Técnico", accent: "termos essenciais", sub: `${VOCAB.length} termos comuns em reuniões de dev` },
 };
 
@@ -25,7 +25,7 @@ const MUSIC_FILTERS = [
   { id: "Avançado — mais rápido", label: "Avançado", dot: "🔴" },
 ];
 
-const PHRASE_CATS = ["Todos", "Abertura", "Carreira", "Travar", "Ganhar tempo", "Técnica", "Acordo"];
+const PHRASE_CATS = ["Todos", "Aeroporto", "Hotel", "Restaurante", "Taxi/Uber", "Padaria", "Loja", "Rua/Informações", "Igreja", "Festa", "Pontos Turísticos"];
 
 interface TabBibliotecaProps {
   biblioTab: BiblioTabId;

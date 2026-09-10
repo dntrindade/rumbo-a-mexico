@@ -107,14 +107,48 @@ export const PLAYLIST = [
 ];
 
 export const PHRASES = [
-  { es: "Hola, mi nombre es Daniel, soy desarrollador full-stack con experiencia en Node.js, React e IA generativa.", pt: "Oi, meu nome é Daniel, sou desenvolvedor full-stack com experiência em Node.js, React e IA generativa.", ctx: "Abertura de apresentação", cat: "Abertura", icon: "🎤" },
-  { es: "Tengo más de veinte años en operaciones y hace un año me dediqué de lleno al desarrollo de software.", pt: "Tenho mais de vinte anos em operações e há um ano me dediquei integralmente ao desenvolvimento de software.", ctx: "Contexto de carreira", cat: "Carreira", icon: "🚀" },
-  { es: "Disculpa, ¿podrías repetir la pregunta, por favor?", pt: "Desculpa, você poderia repetir a pergunta, por favor?", ctx: "Pedir repetição sem travar", cat: "Travar", icon: "🛠️" },
-  { es: "Dame un momento para pensarlo.", pt: "Me dê um momento para pensar.", ctx: "Ganhar tempo com naturalidade", cat: "Ganhar tempo", icon: "⏳" },
-  { es: "Voy a compartir mi pantalla.", pt: "Vou compartilhar minha tela.", ctx: "Reunião técnica", cat: "Técnica", icon: "🧠" },
-  { es: "Estoy de acuerdo, aunque también podríamos considerar…", pt: "Concordo, embora também pudéssemos considerar…", ctx: "Concordar com ressalva", cat: "Acordo", icon: "🤝" },
-  { es: "No estoy seguro en este momento, pero lo voy a investigar y les aviso.", pt: "Não tenho certeza no momento, mas vou pesquisar e aviso vocês.", ctx: "Não saber sem travar a conversa", cat: "Travar", icon: "🛠️" },
-  { es: "Quedo atento a cualquier duda, ¡muchas gracias por su tiempo!", pt: "Fico à disposição para qualquer dúvida, muito obrigado pelo tempo de vocês!", ctx: "Fechar reunião", cat: "Acordo", icon: "✨" },
+  // AEROPORTO
+  { es: "¿Dónde está la salida de migraciones?", pt: "Onde fica a saída de imigração?", ctx: "Aeroporto - entrada/saída", cat: "Aeroporto", icon: "✈️" },
+  { es: "Necesito ir a la zona de recogida de equipaje.", pt: "Preciso ir à área de retirada de malas.", ctx: "Aeroporto - bagagem", cat: "Aeroporto", icon: "🧳" },
+  { es: "¿Dónde puedo encontrar un taxi o Uber?", pt: "Onde posso encontrar um táxi ou Uber?", ctx: "Aeroporto - transporte", cat: "Aeroporto", icon: "🚕" },
+  
+  // HOTEL
+  { es: "Tengo una reserva a nombre de Daniel.", pt: "Tenho uma reserva em nome de Daniel.", ctx: "Hotel - check-in", cat: "Hotel", icon: "🏨" },
+  { es: "¿A qué hora es el desayuno?", pt: "A que horas é o café da manhã?", ctx: "Hotel - informações", cat: "Hotel", icon: "🍳" },
+  { es: "La llave no funciona, ¿puedes ayudarme?", pt: "A chave não funciona, você pode me ajudar?", ctx: "Hotel - problemas", cat: "Hotel", icon: "🔑" },
+  
+  // RESTAURANTE
+  { es: "Una mesa para dos, por favor.", pt: "Uma mesa para dois, por favor.", ctx: "Restaurante - chegada", cat: "Restaurante", icon: "🍽️" },
+  { es: "¿Cuál es el platillo típico de aquí?", pt: "Qual é o prato típico daqui?", ctx: "Restaurante - pedido", cat: "Restaurante", icon: "🍲" },
+  { es: "La cuenta, por favor.", pt: "A conta, por favor.", ctx: "Restaurante - pagamento", cat: "Restaurante", icon: "💳" },
+  
+  // TAXI / UBER
+  { es: "Llévame al hotel Palacio, por favor.", pt: "Leve-me ao hotel Palácio, por favor.", ctx: "Taxi - destino", cat: "Taxi/Uber", icon: "🚕" },
+  { es: "¿Cuál es el precio aproximado?", pt: "Qual é o preço aproximado?", ctx: "Taxi - tarifa", cat: "Taxi/Uber", icon: "💵" },
+  
+  // PADARIA
+  { es: "Dos panes de dulce y un café, por favor.", pt: "Dois pães doces e um café, por favor.", ctx: "Padaria - pedido", cat: "Padaria", icon: "🥐" },
+  { es: "¿Cuánto cuesta?", pt: "Quanto custa?", ctx: "Padaria - preço", cat: "Padaria", icon: "🏷️" },
+  
+  // LOJA
+  { es: "¿Tienes esto en talla M?", pt: "Você tem isso no tamanho M?", ctx: "Loja - roupas", cat: "Loja", icon: "👕" },
+  { es: "¿Aceptan tarjeta de crédito?", pt: "Vocês aceitam cartão de crédito?", ctx: "Loja - pagamento", cat: "Loja", icon: "💳" },
+  
+  // RUA / INFORMAÇÕES
+  { es: "Disculpa, ¿cómo llego a la plaza mayor?", pt: "Desculpa, como eu chego à praça principal?", ctx: "Rua - direção", cat: "Rua/Informações", icon: "🗺️" },
+  { es: "¿Es seguro este barrio de noche?", pt: "É seguro este bairro à noite?", ctx: "Rua - segurança", cat: "Rua/Informações", icon: "🚨" },
+  
+  // PONTOS TURÍSTICOS
+  { es: "¿Cuál es el horario de atención del museo?", pt: "Qual é o horário de funcionamento do museu?", ctx: "Turismo - horários", cat: "Pontos Turísticos", icon: "🏛️" },
+  { es: "¿Cuánto cuesta la entrada?", pt: "Quanto custa a entrada?", ctx: "Turismo - preço", cat: "Pontos Turísticos", icon: "🎫" },
+  
+  // IGREJA
+  { es: "¿A qué hora es la misa?", pt: "A que horas é a missa?", ctx: "Igreja - informações", cat: "Igreja", icon: "⛪" },
+  { es: "¿Es permitido tomar fotos aquí?", pt: "É permitido tirar fotos aqui?", ctx: "Igreja - regras", cat: "Igreja", icon: "📸" },
+  
+  // FESTA / VIDA NOTURNA
+  { es: "¿Dónde hay un bar o discoteca cerca?", pt: "Onde tem um bar ou discoteca perto?", ctx: "Diversão - localização", cat: "Festa", icon: "🎉" },
+  { es: "Una cerveza fría, por favor.", pt: "Uma cerveja gelada, por favor.", ctx: "Diversão - bebida", cat: "Festa", icon: "🍺" },
 ];
 
 export const VOCAB = [
