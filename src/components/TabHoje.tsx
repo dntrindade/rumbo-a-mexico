@@ -1,5 +1,7 @@
 import React from "react";
 import { PILLARS, WEEKS } from "../data";
+import { PainelExercicios } from './PainelExercicios';
+import { TabBiblioteca } from './TabBiblioteca';
 
 interface TabHojeProps {
   todayIndex: number;
@@ -28,6 +30,9 @@ const PILLAR_ICON: Record<string, string> = {
   V: "📚",
 };
 
+// Pilares que agora têm exercício interativo dentro do app (sem redirecionar)
+const INTERACTIVE_PILLARS = ["E", "C", "V"];
+
 export function TabHoje({
   todayIndex, wi, d, pct, progress, updateProgress,
   minutesToday, checkedCount, total, currentStreak,
@@ -38,6 +43,7 @@ export function TabHoje({
   const heroIndex = allDone ? PILLARS.length - 1 : activeIndex;
   const heroPillar = PILLARS[heroIndex];
   const heroTask = WEEKS[wi]?.tasks[heroIndex];
+  const heroIsInteractive = INTERACTIVE_PILLARS.includes(heroPillar.code);
 
   return (
     <div className="grid lg:grid-cols-[1fr_360px] gap-6 items-start">
@@ -55,23 +61,40 @@ export function TabHoje({
           </div>
           <div className="fraunces font-extrabold text-[24px] leading-tight mb-2">{heroPillar.title}</div>
           <div className="text-[14px] leading-[1.6] mb-4" style={{ color: "#4A4A4A" }} dangerouslySetInnerHTML={{ __html: heroTask?.desc || "" }} />
-          {heroTask?.url && (
-            <div className="flex items-center gap-3 flex-wrap">
-              <a
-                href={heroTask.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-[14px] font-bold px-5 py-2.5 rounded-full text-white transition-all hover:brightness-105 active:scale-[0.98]"
-                style={{ background: "#E86A33" }}
-              >
-                ▶ Praticar agora ({heroPillar.time})
-              </a>
+
+          {/* NOVO: se o pilar ativo é E, C ou V, mostra o exercício interativo dentro do card */}
+          {heroIsInteractive ? (
+            <div className="mt-2">
+              <PainelExercicios
+                pillarCode={heroPillar.code as "E" | "C" | "V"}
+                weekIndex={wi}
+                onComplete={() => updateProgress(`w${wi}-p${heroIndex}-d${d}`, true)}
+              />
               {!allDone && (
-                <span className="text-[12px]" style={{ color: "#6E6350" }}>
+                <span className="block mt-3 text-[12px]" style={{ color: "#6E6350" }}>
                   {checkedCount}/{total} tarefas do desafio concluídas
                 </span>
               )}
             </div>
+          ) : (
+            heroTask?.url && (
+              <div className="flex items-center gap-3 flex-wrap">
+                <a
+                  href={heroTask.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-[14px] font-bold px-5 py-2.5 rounded-full text-white transition-all hover:brightness-105 active:scale-[0.98]"
+                  style={{ background: "#E86A33" }}
+                >
+                  ▶ Praticar agora ({heroPillar.time})
+                </a>
+                {!allDone && (
+                  <span className="text-[12px]" style={{ color: "#6E6350" }}>
+                    {checkedCount}/{total} tarefas do desafio concluídas
+                  </span>
+                )}
+              </div>
+            )
           )}
         </div>
 
@@ -86,6 +109,7 @@ export function TabHoje({
               const task = WEEKS[wi]?.tasks[pi];
               const borderColor = checked ? "#006847" : isActive ? "#E86A33" : "#E8DCC3";
               const bg = checked ? "#F0F9F1" : "#FFFEFA";
+              const isInteractive = INTERACTIVE_PILLARS.includes(pillar.code);
 
               return (
                 <div
@@ -129,7 +153,19 @@ export function TabHoje({
 
                   <div className="text-[13px] mt-2 leading-[1.5]" style={{ color: "#4A4A4A" }} dangerouslySetInnerHTML={{ __html: task?.desc || "" }} />
 
-                  {!checked && task?.url && (
+                  {/* NOVO: exercício interativo embutido no card do baralho, só quando ativo e não concluído */}
+                  {!checked && isInteractive && isActive && (
+                    <div className="mt-3">
+                      <PainelExercicios
+                        pillarCode={pillar.code as "E" | "C" | "V"}
+                        weekIndex={wi}
+                        onComplete={() => updateProgress(key, true)}
+                      />
+                    </div>
+                  )}
+
+                  {/* Link externo continua existindo para O (Ouvir) e M (Música), e como fallback quando não é o card ativo */}
+                  {!checked && task?.url && (!isInteractive || !isActive) && (
                     isActive ? (
                       <a
                         href={task.url}
