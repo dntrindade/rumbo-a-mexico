@@ -36,6 +36,60 @@ interface TabBibliotecaProps {
   currentStreak: number;
 }
 
+// --- Melhoria: áudio nativo do navegador (grátis, sem sair do app) ---
+function speakSpanish(text: string) {
+  try {
+    window.speechSynthesis.cancel(); // corta qualquer fala anterior antes de começar uma nova
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "es-MX";
+    utterance.rate = 0.92;
+    window.speechSynthesis.speak(utterance);
+  } catch {
+    // navegador sem suporte a speechSynthesis — falha silenciosa, não quebra a página
+  }
+}
+
+// --- Melhoria: distância de Levenshtein pra comparar o que foi dito com a frase esperada ---
+function levenshtein(a: string, b: string): number {
+  const m = a.length, n = b.length;
+  const dp: number[][] = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  for (let i = 0; i <= m; i++) dp[i][0] = i;
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      dp[i][j] = a[i - 1] === b[j - 1]
+        ? dp[i - 1][j - 1]
+        : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+    }
+  }
+  return dp[m][n];
+}
+
+function normalize(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove acentos pra comparar de forma mais tolerante
+    .replace(/[¿?¡!.,]/g, "")
+    .trim();
+}
+
+function scoreFromTexts(expected: string, spoken: string): number {
+  const a = normalize(expected);
+  const b = normalize(spoken);
+  if (!b) return 0;
+  const dist = levenshtein(a, b);
+  const maxLen = Math.max(a.length, b.length) || 1;
+  const similarity = 1 - dist / maxLen;
+  return Math.max(0, Math.min(10, Math.round(similarity * 10)));
+}
+
+function scoreColor(score: number): { bg: string; fg: string; border: string } {
+  if (score <= 3) return { bg: "#FDE8E8", fg: "#CE1126", border: "#F5C2C2" };
+  if (score <= 6) return { bg: "#FFF1E0", fg: "#E86A33", border: "#F5D9B8" };
+  if (score <= 8) return { bg: "#FFF9DB", fg: "#B8960C", border: "#F0E4A8" };
+  return { bg: "#E8F5E9", fg: "#006847", border: "#C8E6C9" };
+}
+
 export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, daysDoneCount, currentStreak }: TabBibliotecaProps) {
   const headline = HEADLINES[biblioTab];
 
@@ -46,6 +100,10 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [savedPhrases, setSavedPhrases] = useState<number[]>([]);
   const [toast, setToast] = useState<string | null>(null);
+
+  // --- Melhoria: estado da gravação/score por frase (não persiste — some ao sair ou regravar) ---
+  const [recordingKey, setRecordingKey] = useState<string | null>(null);
+  const [resultByKey, setResultByKey] = useState<Record<string, { text: string; score: number } | undefined>>({});
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -60,6 +118,40 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
     } catch {
       showToast("Não foi possível copiar automaticamente");
     }
+  };
+
+  // --- Melhoria: grava a voz do usuário, transcreve e pontua contra a frase esperada ---
+  const recordAndScore = (key: string, expectedText: string) => {
+    const RecognitionAPI: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!RecognitionAPI) {
+      showToast("Seu navegador não suporta gravação de voz. Tente no Chrome.");
+      return;
+    }
+
+    // regravar substitui o resultado anterior daquela mesma frase (nada acumula)
+    setResultByKey(prev => ({ ...prev, [key]: undefined }));
+    setRecordingKey(key);
+
+    const recognition = new RecognitionAPI();
+    recognition.lang = "es-MX";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event: any) => {
+      const spokenText = event.results?.[0]?.[0]?.transcript || "";
+      const score = scoreFromTexts(expectedText, spokenText);
+      setResultByKey(prev => ({ ...prev, [key]: { text: spokenText, score } }));
+    };
+
+    recognition.onerror = () => {
+      showToast("Não foi possível captar o áudio. Tente novamente.");
+    };
+
+    recognition.onend = () => {
+      setRecordingKey(prev => (prev === key ? null : prev));
+    };
+
+    recognition.start();
   };
 
   const filteredSongsByTier = musicFilter === "todos" ? PLAYLIST : PLAYLIST.filter(t => t.tier === musicFilter);
@@ -291,15 +383,25 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
                       <div className="mt-1.5 text-[11px] font-bold" style={{ color: "#8A7F68" }}>{p.ctx}</div>
 
                       <div className="mt-4 flex flex-wrap gap-2">
-                        <a
-                          href={`https://translate.google.com/?sl=es&tl=pt&text=${encodeURIComponent(p.es)}&op=translate`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <button
+                          onClick={() => speakSpanish(p.es)}
                           className="h-9 px-4 rounded-full text-[12.5px] font-bold flex items-center gap-1.5 transition"
                           style={{ background: "#E8F5E9", color: "#006847", border: "1px solid #C8E6C9" }}
                         >
                           🔊 Ouvir pronúncia
-                        </a>
+                        </button>
+                        <button
+                          onClick={() => recordAndScore(key, p.es)}
+                          disabled={recordingKey === key}
+                          className="h-9 px-4 rounded-full text-[12.5px] font-bold flex items-center gap-1.5 transition"
+                          style={{
+                            background: recordingKey === key ? "#CE1126" : "#FFEDEE",
+                            color: recordingKey === key ? "#fff" : "#B0182A",
+                            border: "1px solid #F5C2C2",
+                          }}
+                        >
+                          {recordingKey === key ? "🔴 Gravando..." : "🎤 Praticar"}
+                        </button>
                         <button
                           onClick={() => copyText(p.es, key)}
                           className="h-9 px-4 rounded-full text-[12.5px] font-bold flex items-center gap-1.5 transition"
@@ -315,6 +417,32 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
                           {isSaved ? "⭐ Salva" : "⭐ Salvar"}
                         </button>
                       </div>
+
+                      {/* Melhoria: resultado da prática (0-10 + medidor de cor). Some ao regravar ou sair da página. */}
+                      {resultByKey[key] && (
+                        <div
+                          className="mt-3 rounded-[12px] p-3 flex items-center justify-between gap-3"
+                          style={{
+                            background: scoreColor(resultByKey[key]!.score).bg,
+                            border: `1px solid ${scoreColor(resultByKey[key]!.score).border}`,
+                          }}
+                        >
+                          <div className="min-w-0">
+                            <div className="text-[11px] font-bold tracking-wide" style={{ color: scoreColor(resultByKey[key]!.score).fg }}>
+                              VOCÊ DISSE
+                            </div>
+                            <div className="text-[13px] italic truncate" style={{ color: "#4A4A4A" }}>
+                              "{resultByKey[key]!.text || "(não captado)"}"
+                            </div>
+                          </div>
+                          <div
+                            className="shrink-0 w-11 h-11 rounded-full grid place-items-center font-extrabold text-[14px]"
+                            style={{ background: "#FFFEFA", color: scoreColor(resultByKey[key]!.score).fg, border: `2px solid ${scoreColor(resultByKey[key]!.score).fg}` }}
+                          >
+                            {resultByKey[key]!.score}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -371,6 +499,15 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
                             {copiedKey === key ? "✓" : "📋"}
                           </button>
                         </div>
+
+                        {/* Melhoria: botão de ouvir a palavra, mesmo áudio nativo usado nas Frases */}
+                        <button
+                          onClick={() => speakSpanish(v.es)}
+                          className="mt-3 h-9 px-4 rounded-full text-[12.5px] font-bold flex items-center gap-1.5 transition"
+                          style={{ background: "#E8F5E9", color: "#006847", border: "1px solid #C8E6C9" }}
+                        >
+                          🔊 Ouvir
+                        </button>
                       </div>
                     </div>
                   );
