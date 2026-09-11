@@ -35,6 +35,15 @@ const PILLAR_ICON: Record<string, string> = {
 // Pilares que agora têm exercício interativo dentro do app (sem redirecionar)
 const INTERACTIVE_PILLARS = ["E", "C", "V"];
 
+// Descrições novas pra E, C, V — o texto antigo (Superholly, Anki, HelloTalk) não
+// faz mais sentido, já que essas 3 tarefas agora são exercícios interativos dentro
+// do próprio app. Isso substitui só a exibição, sem tocar em src/data/index.ts.
+const INTERACTIVE_DESC: Record<string, string> = {
+  E: "Ouça a frase do dia, repita em voz alta e receba seu score na hora — sem sair do app.",
+  C: "Viva um diálogo turístico do dia: o app fala a parte dele, você responde a sua, e recebe retorno na hora.",
+  V: "Ouça a palavra do dia, repita, e veja seu score — flashcards nativos, sem precisar de Anki.",
+};
+
 export function TabHoje({
   todayIndex, wi, d, pct, progress, updateProgress,
   minutesToday, checkedCount, total, currentStreak,
@@ -74,7 +83,7 @@ export function TabHoje({
             </span>
           </div>
           <div className="fraunces font-extrabold text-[24px] leading-tight mb-2">{heroPillar.title}</div>
-          <div className="text-[14px] leading-[1.6] mb-4" style={{ color: "#4A4A4A" }} dangerouslySetInnerHTML={{ __html: heroTask?.desc || "" }} />
+          <div className="text-[14px] leading-[1.6] mb-4" style={{ color: "#4A4A4A" }} dangerouslySetInnerHTML={{ __html: (heroIsInteractive ? INTERACTIVE_DESC[heroPillar.code] : heroTask?.desc) || "" }} />
 
           {/* NOVO: se o pilar ativo é E, C ou V, mostra o exercício interativo dentro do card */}
           {heroIsInteractive ? (
@@ -161,7 +170,7 @@ export function TabHoje({
                     )}
                   </div>
 
-                  <div className="text-[13px] mt-2 leading-[1.5]" style={{ color: "#4A4A4A" }} dangerouslySetInnerHTML={{ __html: task?.desc || "" }} />
+                  <div className="text-[13px] mt-2 leading-[1.5]" style={{ color: "#4A4A4A" }} dangerouslySetInnerHTML={{ __html: (isInteractive ? INTERACTIVE_DESC[pillar.code] : task?.desc) || "" }} />
 
                   {/* Exercício interativo embutido no card do baralho — sempre que o pilar for E, C ou V, esteja ATIVO ou PENDENTE. Nunca mais redireciona pra fora. */}
                   {!checked && isInteractive && (
