@@ -1,6 +1,8 @@
 import React from "react";
 import { PILLARS, WEEKS } from "../data";
-import { PainelExercicios } from './PainelExercicios';
+import { RepeticaoGuiada } from './RepeticaoGuiada';
+import { DialogosTuristicos } from './DialogosTuristicos';
+import { FlashcardNativo } from './FlashcardNativo';
 import { TabBiblioteca } from './TabBiblioteca';
 
 interface TabHojeProps {
@@ -45,6 +47,18 @@ export function TabHoje({
   const heroTask = WEEKS[wi]?.tasks[heroIndex];
   const heroIsInteractive = INTERACTIVE_PILLARS.includes(heroPillar.code);
 
+  // Dia da trilha em base 1 (1 a 28), pra bater com os dados de exercicios-28dias.ts
+  const currentDay = todayIndex + 1;
+
+  // Renderiza o exercício interativo certo de acordo com o código do pilar (E, C ou V)
+  const renderExercicioInterativo = (pillarCode: string, key: string) => {
+    const onComplete = () => updateProgress(key, true);
+    if (pillarCode === "E") return <RepeticaoGuiada day={currentDay} onComplete={onComplete} />;
+    if (pillarCode === "C") return <DialogosTuristicos day={currentDay} onComplete={onComplete} />;
+    if (pillarCode === "V") return <FlashcardNativo day={currentDay} onComplete={onComplete} />;
+    return null;
+  };
+
   return (
     <div className="grid lg:grid-cols-[1fr_360px] gap-6 items-start">
       <div className="min-w-0 flex flex-col gap-6">
@@ -65,11 +79,7 @@ export function TabHoje({
           {/* NOVO: se o pilar ativo é E, C ou V, mostra o exercício interativo dentro do card */}
           {heroIsInteractive ? (
             <div className="mt-2">
-              <PainelExercicios
-                pillarCode={heroPillar.code as "E" | "C" | "V"}
-                weekIndex={wi}
-                onComplete={() => updateProgress(`w${wi}-p${heroIndex}-d${d}`, true)}
-              />
+              {renderExercicioInterativo(heroPillar.code, `w${wi}-p${heroIndex}-d${d}`)}
               {!allDone && (
                 <span className="block mt-3 text-[12px]" style={{ color: "#6E6350" }}>
                   {checkedCount}/{total} tarefas do desafio concluídas
@@ -156,11 +166,7 @@ export function TabHoje({
                   {/* NOVO: exercício interativo embutido no card do baralho, só quando ativo e não concluído */}
                   {!checked && isInteractive && isActive && (
                     <div className="mt-3">
-                      <PainelExercicios
-                        pillarCode={pillar.code as "E" | "C" | "V"}
-                        weekIndex={wi}
-                        onComplete={() => updateProgress(key, true)}
-                      />
+                      {renderExercicioInterativo(pillar.code, key)}
                     </div>
                   )}
 

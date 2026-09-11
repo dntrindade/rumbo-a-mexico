@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { TOOLS, PLAYLIST, PHRASES, VOCAB } from "../data";
+import { speakSpanish, scoreColor, recordAndScore as recordAndScoreShared } from "../utils/audioPratica";
 
 export type BiblioTabId = "ferramentas" | "musicas" | "frases" | "vocab";
 
@@ -36,60 +37,6 @@ interface TabBibliotecaProps {
   currentStreak: number;
 }
 
-// --- Melhoria: áudio nativo do navegador (grátis, sem sair do app) ---
-function speakSpanish(text: string) {
-  try {
-    window.speechSynthesis.cancel(); // corta qualquer fala anterior antes de começar uma nova
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "es-MX";
-    utterance.rate = 0.92;
-    window.speechSynthesis.speak(utterance);
-  } catch {
-    // navegador sem suporte a speechSynthesis — falha silenciosa, não quebra a página
-  }
-}
-
-// --- Melhoria: distância de Levenshtein pra comparar o que foi dito com a frase esperada ---
-function levenshtein(a: string, b: string): number {
-  const m = a.length, n = b.length;
-  const dp: number[][] = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
-  for (let i = 0; i <= m; i++) dp[i][0] = i;
-  for (let j = 0; j <= n; j++) dp[0][j] = j;
-  for (let i = 1; i <= m; i++) {
-    for (let j = 1; j <= n; j++) {
-      dp[i][j] = a[i - 1] === b[j - 1]
-        ? dp[i - 1][j - 1]
-        : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
-    }
-  }
-  return dp[m][n];
-}
-
-function normalize(s: string): string {
-  return s
-    .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove acentos pra comparar de forma mais tolerante
-    .replace(/[¿?¡!.,]/g, "")
-    .trim();
-}
-
-function scoreFromTexts(expected: string, spoken: string): number {
-  const a = normalize(expected);
-  const b = normalize(spoken);
-  if (!b) return 0;
-  const dist = levenshtein(a, b);
-  const maxLen = Math.max(a.length, b.length) || 1;
-  const similarity = 1 - dist / maxLen;
-  return Math.max(0, Math.min(10, Math.round(similarity * 10)));
-}
-
-function scoreColor(score: number): { bg: string; fg: string; border: string } {
-  if (score <= 3) return { bg: "#FDE8E8", fg: "#CE1126", border: "#F5C2C2" };
-  if (score <= 6) return { bg: "#FFF1E0", fg: "#E86A33", border: "#F5D9B8" };
-  if (score <= 8) return { bg: "#FFF9DB", fg: "#B8960C", border: "#F0E4A8" };
-  return { bg: "#E8F5E9", fg: "#006847", border: "#C8E6C9" };
-}
-
 export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, daysDoneCount, currentStreak }: TabBibliotecaProps) {
   const headline = HEADLINES[biblioTab];
 
@@ -121,37 +68,17 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
   };
 
   // --- Melhoria: grava a voz do usuário, transcreve e pontua contra a frase esperada ---
-  const recordAndScore = (key: string, expectedText: string) => {
-    const RecognitionAPI: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!RecognitionAPI) {
-      showToast("Seu navegador não suporta gravação de voz. Tente no Chrome.");
-      return;
-    }
-
+  // Usa o utilitário compartilhado (src/utils/audioPratica.ts) — mesma lógica da tarefa "Frases".
+  const recordAndScoreLocal = (key: string, expectedText: string) => {
     // regravar substitui o resultado anterior daquela mesma frase (nada acumula)
     setResultByKey(prev => ({ ...prev, [key]: undefined }));
-    setRecordingKey(key);
 
-    const recognition = new RecognitionAPI();
-    recognition.lang = "es-MX";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    recognition.onresult = (event: any) => {
-      const spokenText = event.results?.[0]?.[0]?.transcript || "";
-      const score = scoreFromTexts(expectedText, spokenText);
-      setResultByKey(prev => ({ ...prev, [key]: { text: spokenText, score } }));
-    };
-
-    recognition.onerror = () => {
-      showToast("Não foi possível captar o áudio. Tente novamente.");
-    };
-
-    recognition.onend = () => {
-      setRecordingKey(prev => (prev === key ? null : prev));
-    };
-
-    recognition.start();
+    recordAndScoreShared(expectedText, {
+      onStart: () => setRecordingKey(key),
+      onResult: (result) => setResultByKey(prev => ({ ...prev, [key]: result })),
+      onError: (message) => showToast(message),
+      onEnd: () => setRecordingKey(prev => (prev === key ? null : prev)),
+    });
   };
 
   const filteredSongsByTier = musicFilter === "todos" ? PLAYLIST : PLAYLIST.filter(t => t.tier === musicFilter);
@@ -391,7 +318,7 @@ export function TabBiblioteca({ biblioTab, setBiblioTab, checkedCount, total, da
                           🔊 Ouvir pronúncia
                         </button>
                         <button
-                          onClick={() => recordAndScore(key, p.es)}
+                          onClick={() => recordAndScoreLocal(key, p.es)}
                           disabled={recordingKey === key}
                           className="h-9 px-4 rounded-full text-[12.5px] font-bold flex items-center gap-1.5 transition"
                           style={{
