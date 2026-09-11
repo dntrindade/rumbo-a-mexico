@@ -163,15 +163,15 @@ export function TabHoje({
 
                   <div className="text-[13px] mt-2 leading-[1.5]" style={{ color: "#4A4A4A" }} dangerouslySetInnerHTML={{ __html: task?.desc || "" }} />
 
-                  {/* NOVO: exercício interativo embutido no card do baralho, só quando ativo e não concluído */}
-                  {!checked && isInteractive && isActive && (
+                  {/* Exercício interativo embutido no card do baralho — sempre que o pilar for E, C ou V, esteja ATIVO ou PENDENTE. Nunca mais redireciona pra fora. */}
+                  {!checked && isInteractive && (
                     <div className="mt-3">
                       {renderExercicioInterativo(pillar.code, key)}
                     </div>
                   )}
 
-                  {/* Link externo continua existindo para O (Ouvir) e M (Música), e como fallback quando não é o card ativo */}
-                  {!checked && task?.url && (!isInteractive || !isActive) && (
+                  {/* Link externo só existe pra O (Ouvir) e M (Música) — nunca mais pra E, C ou V */}
+                  {!checked && task?.url && !isInteractive && (
                     isActive ? (
                       <a
                         href={task.url}
